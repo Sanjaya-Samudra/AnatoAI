@@ -21,7 +21,7 @@ interface BodyPartConfig {
 // ADJUST PIN POSITIONS HERE
 // The 'pinOffset' property controls where the pin appears relative to the body part's center.
 // [x, y, z] - Increase these values to move pins further out from the body.
-const FULL_BODY_PARTS: BodyPartConfig[] = [
+export const FULL_BODY_PARTS: BodyPartConfig[] = [
   // --- Head Region ---
   { name: "Head", type: "sphere", position: [0, 1.65, 0], args: [0.25, 32, 32], pinOffset: [0, 0.15, 0.35] },
   { name: "Left Eye", type: "sphere", position: [0.06, 1.55, 0], args: [0.05, 16, 16], pinOffset: [0, 0, 0.32] },
@@ -146,14 +146,22 @@ interface BodyModelProps {
   onSelectPart: (part: string) => void;
   selectedPart: string | null;
   gender: "male" | "female";
+  viewMode: "full" | "head";
 }
 
 export const BodyModel: React.FC<BodyModelProps> = ({
   onSelectPart,
   selectedPart,
   gender,
+  viewMode,
 }) => {
-  const modelPath = gender === "male" ? "/models/male-body.glb" : "/models/female-body.glb";
+  const modelPath = useMemo(() => {
+    if (viewMode === "head") {
+      return gender === "male" ? "/models/male/male-head.glb" : "/models/female/female-head.glb";
+    }
+    return gender === "male" ? "/models/male/male-body.glb" : "/models/female/female-body.glb";
+  }, [gender, viewMode]);
+
   const { scene: originalScene, animations } = useGLTF(modelPath);
   // Clone the scene to avoid mutating the cached original
   const scene = useMemo(() => SkeletonUtils.clone(originalScene), [originalScene]);
@@ -242,7 +250,7 @@ export const BodyModel: React.FC<BodyModelProps> = ({
 
       {/* Annotations (Cards + Pins + Lines) */}
       <group>
-        {FULL_BODY_PARTS.map((part) => (
+        {viewMode === "full" && FULL_BODY_PARTS.map((part) => (
           <BodyPart
             key={part.name}
             position={part.position}

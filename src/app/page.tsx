@@ -3,11 +3,26 @@
 import React, { useState } from "react";
 import Scene from "@/components/Scene";
 import Overlay from "@/components/Overlay";
-import { Activity } from "lucide-react";
+import { FULL_BODY_PARTS } from "@/components/BodyModel";
+import { Activity, ArrowLeft, User, Brain } from "lucide-react";
 
 export default function Home() {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [gender, setGender] = useState<"male" | "female">("male");
+  const [viewMode, setViewMode] = useState<"full" | "head">("full");
+
+  const handleSidebarClick = (partName: string) => {
+    if (partName === "Head") {
+      setViewMode("head");
+      setSelectedPart(null); // Clear selection so overlay doesn't show
+    } else if (partName === "Full Body") {
+      setViewMode("full");
+      setSelectedPart(null);
+    } else {
+      setViewMode("full");
+      setSelectedPart(partName);
+    }
+  };
 
   return (
     <main className="relative w-full h-screen overflow-hidden bg-slate-50">
@@ -48,13 +63,48 @@ export default function Home() {
         </div>
       </header>
 
+      {/* Left Sidebar Navigation */}
+      <div className="absolute top-40 left-6 z-10 pointer-events-auto">
+        <div className="bg-white/80 backdrop-blur-xl p-2 rounded-2xl shadow-2xl border border-white/60 flex flex-col gap-2 w-[68px] hover:w-48 transition-all duration-300 ease-out group overflow-hidden">
+          
+          <button
+            onClick={() => handleSidebarClick("Full Body")}
+            className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 ${
+              viewMode === "full"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            }`}
+          >
+            <User className="w-6 h-6 min-w-[24px]" />
+            <span className="font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap delay-75">
+              Full Body
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleSidebarClick("Head")}
+            className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 ${
+              viewMode === "head"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            }`}
+          >
+            <Brain className="w-6 h-6 min-w-[24px]" />
+            <span className="font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap delay-75">
+              Head Region
+            </span>
+          </button>
+
+        </div>
+      </div>
+
       {/* 3D Scene */}
       <div className="absolute inset-0 z-0">
-        <Scene onSelectPart={setSelectedPart} selectedPart={selectedPart} gender={gender} />
+        <Scene onSelectPart={setSelectedPart} selectedPart={selectedPart} gender={gender} viewMode={viewMode} />
       </div>
 
       {/* Instructions / Hint */}
-      {!selectedPart && (
+      {!selectedPart && viewMode === "full" && (
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
           <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-xl border border-white/50 text-slate-600 text-sm font-medium animate-bounce">
             Click on a body part to analyze
