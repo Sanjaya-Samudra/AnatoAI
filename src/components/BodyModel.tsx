@@ -120,7 +120,7 @@ interface BodyModelProps {
   onSelectPart: (part: string) => void;
   selectedPart: string | null;
   gender: "male" | "female";
-  viewMode: "full" | "head";
+  viewMode: "full" | "head" | "left-hand" | "right-hand";
 }
 
 export const BodyModel: React.FC<BodyModelProps> = ({
@@ -133,12 +133,24 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     if (viewMode === "head") {
       return gender === "male" ? "/models/male/male-head.glb" : "/models/female/female-head.glb";
     }
+    if (viewMode === "left-hand") {
+      return gender === "male" ? "/models/male/male-left-hand.glb" : "/models/female/female-left-hand.glb";
+    }
     return gender === "male" ? "/models/male/male-body.glb" : "/models/female/female-body.glb";
   }, [gender, viewMode]);
 
   const { scene: originalScene, animations } = useGLTF(modelPath);
   // Clone the scene to avoid mutating the cached original
-  const scene = useMemo(() => SkeletonUtils.clone(originalScene), [originalScene]);
+  const scene = useMemo(() => {
+    const clonedScene = SkeletonUtils.clone(originalScene);
+    
+    // Apply specific rotations for hands to distinguish them
+    if (viewMode === "left-hand") {
+      clonedScene.rotation.y = Math.PI / 2; // Rotate 90 degrees
+    }
+    
+    return clonedScene;
+  }, [originalScene, viewMode]);
   const { actions } = useAnimations(animations, scene);
   
   useEffect(() => {

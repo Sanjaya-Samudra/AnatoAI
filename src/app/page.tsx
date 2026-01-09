@@ -4,19 +4,22 @@ import React, { useState } from "react";
 import Scene from "@/components/Scene";
 import Overlay from "@/components/Overlay";
 import { FULL_BODY_PARTS } from "@/components/BodyModel";
-import { Activity, ArrowLeft, User, Brain } from "lucide-react";
+import { Activity, ArrowLeft, User, Brain, Hand } from "lucide-react";
 
 export default function Home() {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [gender, setGender] = useState<"male" | "female">("male");
-  const [viewMode, setViewMode] = useState<"full" | "head">("full");
+  const [viewMode, setViewMode] = useState<"full" | "head" | "left-hand" | "right-hand">("full");
 
   const handleSidebarClick = (partName: string) => {
     if (partName === "Head") {
       setViewMode("head");
-      setSelectedPart(null); // Clear selection so overlay doesn't show
+      setSelectedPart(null);
     } else if (partName === "Full Body") {
       setViewMode("full");
+      setSelectedPart(null);
+    } else if (partName === "Left Hand") {
+      setViewMode("left-hand");
       setSelectedPart(null);
     } else {
       setViewMode("full");
@@ -27,6 +30,9 @@ export default function Home() {
   const handlePartSelect = (partName: string) => {
     if (partName === "Head") {
       setViewMode("head");
+      setSelectedPart(null);
+    } else if (partName === "Left Hand") {
+      setViewMode("left-hand");
       setSelectedPart(null);
     } else {
       setSelectedPart(partName);
@@ -101,6 +107,20 @@ export default function Home() {
             <Brain className="w-6 h-6 min-w-[24px]" />
             <span className="font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap delay-75">
               Head Region
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleSidebarClick("Left Hand")}
+            className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 ${
+              viewMode === "left-hand"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            }`}
+          >
+            <Hand className="w-6 h-6 min-w-[24px] transform scale-x-[-1]" />
+            <span className="font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap delay-75">
+              Left Hand
             </span>
           </button>
 

@@ -10,11 +10,11 @@ interface SceneProps {
   onSelectPart: (part: string) => void;
   selectedPart: string | null;
   gender: "male" | "female";
-  viewMode: "full" | "head";
+  viewMode: "full" | "head" | "left-hand" | "right-hand";
 }
 
 interface ControlsProps {
-  viewMode: "full" | "head";
+  viewMode: "full" | "head" | "left-hand" | "right-hand";
   gender: "male" | "female";
 }
 
@@ -30,6 +30,10 @@ function Controls({ viewMode, gender }: ControlsProps) {
       if (viewMode === 'head') {
         // Head View: Default to "lowest zoom level" (furthest distance)
         camera.position.set(0, 0, 6.0);
+        controls.target.set(0, 0, 0);
+      } else if (viewMode === 'left-hand' || viewMode === 'right-hand') {
+        // Hand View: Slightly further back (lower zoom)
+        camera.position.set(0, 0, 4.5);
         controls.target.set(0, 0, 0);
       } else {
         // Full Body: Default to mid-range (5 is mid of 2 and 8)
@@ -54,8 +58,9 @@ function Controls({ viewMode, gender }: ControlsProps) {
 
   // Dynamic zoom limits based on viewMode
   // Head: Min 2.5 (Close), Max 6.0 (Far)
-  const minDistance = viewMode === 'head' ? 2.5 : 2;
-  const maxDistance = viewMode === 'head' ? 6.0 : 8;
+  const isPartView = viewMode !== 'full';
+  const minDistance = isPartView ? 2.0 : 2;
+  const maxDistance = isPartView ? 6.0 : 8;
 
   return (
     <OrbitControls 
