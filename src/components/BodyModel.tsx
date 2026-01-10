@@ -136,7 +136,7 @@ interface BodyModelProps {
   onSelectPart: (part: string) => void;
   selectedPart: string | null;
   gender: "male" | "female";
-  viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand";
+  viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand" | "right-leg";
 }
 
 export const BodyModel: React.FC<BodyModelProps> = ({
@@ -158,6 +158,9 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     if (viewMode === "right-hand") {
       return gender === "male" ? "/models/male/male-right-arm.glb" : "/models/female/female-right-arm.glb";
     }
+    if (viewMode === "right-leg") {
+      return gender === "male" ? "/models/male/male-right-leg.glb" : "/models/female/female-right-leg.glb";
+    }
     return gender === "male" ? "/models/male/male-body.glb" : "/models/female/female-body.glb";
   }, [gender, viewMode]);
 
@@ -168,11 +171,14 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     
     // Apply specific rotations for hands to distinguish them
     if (viewMode === "left-hand") {
-      clonedScene.rotation.y = 0; // Rotated 180 degrees from previous PI
+      clonedScene.rotation.y = gender === "male" ? Math.PI : 0;
     } else if (viewMode === "right-hand") {
-      clonedScene.rotation.y = Math.PI; // Rotated 180 degrees
+      // Male: Rotate 90 deg anticlockwise from PI (PI + PI/2 = 3PI/2 = -PI/2)
+      clonedScene.rotation.y = gender === "male" ? -Math.PI / 2 : Math.PI; 
     } else if (viewMode === "torso") {
       clonedScene.rotation.y = -Math.PI / 2; // Rotate -90 degrees (clockwise) to face forward
+    } else if (viewMode === "right-leg") {
+      clonedScene.rotation.y = -Math.PI / 2; // Both genders: -90 degrees (clockwise)
     }
     
     return clonedScene;

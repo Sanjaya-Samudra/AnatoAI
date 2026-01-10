@@ -3,13 +3,12 @@
 import React, { useState } from "react";
 import Scene from "@/components/Scene";
 import Overlay from "@/components/Overlay";
-import { FULL_BODY_PARTS } from "@/components/BodyModel";
-import { Activity, ArrowLeft, User, Brain, Hand } from "lucide-react";
+import { Activity, User, Brain, Hand, Footprints } from "lucide-react";
 
 export default function Home() {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
   const [gender, setGender] = useState<"male" | "female">("male");
-  const [viewMode, setViewMode] = useState<"full" | "head" | "torso" | "left-hand" | "right-hand">("full");
+  const [viewMode, setViewMode] = useState<"full" | "head" | "torso" | "left-hand" | "right-hand" | "right-leg">("full");
 
   const handleSidebarClick = (partName: string) => {
     if (partName === "Head") {
@@ -27,6 +26,9 @@ export default function Home() {
     } else if (partName === "Right Hand") {
       setViewMode("right-hand");
       setSelectedPart(null);
+    } else if (partName === "Right Leg") {
+      setViewMode("right-leg");
+      setSelectedPart(null);
     } else {
       setViewMode("full");
       setSelectedPart(partName);
@@ -42,6 +44,9 @@ export default function Home() {
       setSelectedPart(null);
     } else if (partName === "Right Hand") {
       setViewMode("right-hand");
+      setSelectedPart(null);
+    } else if (partName === "Right Leg") {
+      setViewMode("right-leg");
       setSelectedPart(null);
     } else {
       setSelectedPart(partName);
@@ -156,6 +161,20 @@ export default function Home() {
             <Hand className="w-6 h-6 min-w-[24px]" />
             <span className="font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap delay-75">
               Right Hand
+            </span>
+          </button>
+
+          <button
+            onClick={() => handleSidebarClick("Right Leg")}
+            className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 ${
+              viewMode === "right-leg"
+                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            }`}
+          >
+            <Footprints className="w-6 h-6 min-w-[24px]" />
+            <span className="font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap delay-75">
+              Right Leg
             </span>
           </button>
 
