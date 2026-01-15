@@ -49,6 +49,28 @@ export const FEMALE_BODY_PARTS: BodyPartConfig[] = [
   { name: "Right Leg", type: "capsule", position: [-0.25, -0.55, -0.05], args: [0.14, 1.4, 4, 8] },
 ];
 
+// --- Head Parts Configuration (Male) ---
+export const MALE_HEAD_PARTS: BodyPartConfig[] = [
+  { name: "Head", type: "sphere", position: [0, 1.30, 0], args: [0.25, 64, 64] },
+  { name: "Left Eye", type: "sphere", position: [-0.39, 0.45, 0.19], args: [0.038, 16, 16] },
+  { name: "Right Eye", type: "sphere", position: [0.39, 0.45, 0.19], args: [0.038, 16, 16] },
+  { name: "Mouth", type: "box", position: [0, -0.45, 0.22], args: [0.11, 0.055, 0.075] },
+  { name: "Left Ear", type: "sphere", position: [-0.80, -0.001, 0], args: [0.095, 16, 16] },
+  { name: "Right Ear", type: "sphere", position: [0.80, -0.002, 0], args: [0.095, 16, 16] },
+  { name: "Neck", type: "capsule", position: [0, -1.20, 0], args: [0.11, 0.33, 4, 8] },
+];
+
+// --- Head Parts Configuration (Female) ---
+export const FEMALE_HEAD_PARTS: BodyPartConfig[] = [
+  { name: "Head", type: "sphere", position: [0, 1.25, 0], args: [0.24, 64, 64] },
+  { name: "Left Eye", type: "sphere", position: [-0.38, 0.60, 0.18], args: [0.036, 16, 16] },
+  { name: "Right Eye", type: "sphere", position: [0.38, 0.60, 0.18], args: [0.036, 16, 16] },
+  { name: "Mouth", type: "box", position: [0, -0.10, 0.21], args: [0.105, 0.052, 0.072] },
+  { name: "Left Ear", type: "sphere", position: [-0.77, 0.20, 0], args: [0.09, 16, 16] },
+  { name: "Right Ear", type: "sphere", position: [0.77, 0.20, 0], args: [0.09, 16, 16] },
+  { name: "Neck", type: "capsule", position: [0, -1.00, 0], args: [0.105, 0.315, 4, 8] },
+];
+
 // --- Components ---
 
 interface BodyPartProps {
@@ -269,6 +291,19 @@ export const BodyModel: React.FC<BodyModelProps> = ({
       {/* Annotations (Cards + Pins + Lines) */}
       <group>
         {viewMode === "full" && (gender === "male" ? MALE_BODY_PARTS : FEMALE_BODY_PARTS).map((part) => (
+          <BodyPart
+            key={part.name}
+            position={part.position}
+            args={part.args as [number, number, number] | [number, number, number, number]}
+            name={part.name}
+            type={part.type}
+            rotation={part.rotation}
+            onSelect={onSelectPart}
+            selectedPart={selectedPart}
+          />
+        ))}
+        
+        {viewMode === "head" && (gender === "male" ? MALE_HEAD_PARTS : FEMALE_HEAD_PARTS).map((part) => (
           <BodyPart
             key={part.name}
             position={part.position}
