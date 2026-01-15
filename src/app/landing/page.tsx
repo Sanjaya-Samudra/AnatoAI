@@ -41,7 +41,26 @@ const AnimatedHeroText = () => {
 
 export default function LandingPage() {
   return (
-    <main className="relative w-full bg-white text-slate-900">
+    <>
+      <style>{`
+        @keyframes gradient-shift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+        .animated-hero-gradient {
+          background: linear-gradient(-45deg, #e0f2fe, #f0f9ff, #bfdbfe, #ffffff);
+          background-size: 400% 400%;
+          animation: gradient-shift 8s ease infinite;
+        }
+      `}</style>
+      <main className="relative w-full bg-white text-slate-900">
       {/* Header */}
       <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -75,7 +94,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="relative w-full h-screen flex items-center justify-center pt-20 overflow-hidden bg-gradient-to-br from-blue-50 via-white to-slate-50">
+      <section id="home" className="relative w-full h-screen flex items-center justify-center pt-20 overflow-hidden animated-hero-gradient">
         {/* 3D Canvas - Background */}
         <div className="absolute inset-0 z-0">
           <Canvas
@@ -203,7 +222,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-    
+      {/* Footer */}
+      <footer className="w-full bg-slate-900 text-white py-8 px-6">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-slate-400">
+            © 2026 AnatoAI. Interactive health assistant powered by AI and 3D anatomy models.
+          </p>
+        </div>
+      </footer>
     </main>
+    </>
   );
 }
