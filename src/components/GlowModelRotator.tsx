@@ -9,12 +9,14 @@ interface GlowModelRotatorProps {
   modelPath: string;
   position: [number, number, number];
   scale?: number;
+  direction?: "clockwise" | "counter-clockwise";
 }
 
 export const GlowModelRotator: React.FC<GlowModelRotatorProps> = ({
   modelPath,
   position,
   scale = 1,
+  direction = "clockwise",
 }) => {
   const { scene } = useGLTF(modelPath);
   const groupRef = useRef<THREE.Group>(null);
@@ -27,7 +29,8 @@ export const GlowModelRotator: React.FC<GlowModelRotatorProps> = ({
   // Rotate on Y axis
   useFrame(() => {
     if (groupRef.current) {
-      groupRef.current.rotation.y += 0.01; // Slow rotation
+      const rotationSpeed = 0.005;
+      groupRef.current.rotation.y += direction === "clockwise" ? rotationSpeed : -rotationSpeed;
     }
   });
 

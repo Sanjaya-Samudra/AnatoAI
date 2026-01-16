@@ -136,7 +136,7 @@ interface BodyModelProps {
   onSelectPart: (part: string) => void;
   selectedPart: string | null;
   gender: "male" | "female";
-  viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand" | "right-leg";
+  viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand" | "left-leg" | "right-leg";
 }
 
 export const BodyModel: React.FC<BodyModelProps> = ({
@@ -158,6 +158,9 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     if (viewMode === "right-hand") {
       return gender === "male" ? "/models/male/male-right-arm.glb" : "/models/female/female-right-arm.glb";
     }
+    if (viewMode === "left-leg") {
+      return gender === "male" ? "/models/male/male-left-leg.glb" : "/models/female/female-left-leg.glb";
+    }
     if (viewMode === "right-leg") {
       return gender === "male" ? "/models/male/male-right-leg.glb" : "/models/female/female-right-leg.glb";
     }
@@ -178,6 +181,8 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     } else if (viewMode === "torso") {
       clonedScene.rotation.y = -Math.PI / 2; // Rotate -90 degrees (clockwise) to face forward
     } else if (viewMode === "right-leg") {
+      clonedScene.rotation.y = -Math.PI / 2; // Both genders: -90 degrees (clockwise)
+    } else if (viewMode === "left-leg") {
       clonedScene.rotation.y = -Math.PI / 2; // Both genders: -90 degrees (clockwise)
     }
     

@@ -4,8 +4,10 @@ import React, { useRef, useEffect, Suspense, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { GlowModelRotator } from "@/components/GlowModelRotator";
-import { Activity } from "lucide-react";
+import { Activity, Brain, Heart, Stethoscope, ArrowRight, Github, Twitter, Linkedin } from "lucide-react";
 import Link from "next/link";
+
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const AnimatedHeroText = () => {
   const [displayedText, setDisplayedText] = useState("Explore the human body");
@@ -27,10 +29,10 @@ const AnimatedHeroText = () => {
   }, []);
 
   return (
-    <div className="text-center">
+    <div className="text-center min-h-[120px] flex items-center justify-center">
       <h2
-        className={`text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent transition-all duration-500 ${
-          isTransitioning ? "opacity-0" : "opacity-100"
+        className={`text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent transition-all duration-500 pb-4 leading-normal ${
+          isTransitioning ? "opacity-0 transform translate-y-8 blur-sm" : "opacity-100 transform translate-y-0 blur-0"
         }`}
       >
         {displayedText}
@@ -54,70 +56,102 @@ export default function LandingPage() {
             background-position: 0% 50%;
           }
         }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
         .animated-hero-gradient {
-          background: linear-gradient(-45deg, #e0f2fe, #f0f9ff, #bfdbfe, #ffffff);
+          /* Darkened Light Mode Gradient: Slate-200 to Blue-100 mix, no pure white */
+          background: linear-gradient(-45deg, #cbd5e1, #e2e8f0, #dbeafe, #cbd5e1);
           background-size: 400% 400%;
           animation: gradient-shift 8s ease infinite;
         }
+        :global(.dark) .animated-hero-gradient {
+          background: none !important;
+        }
+        .glass-header-floating {
+             background: rgba(255, 255, 255, 0.85);
+             backdrop-filter: blur(12px);
+             -webkit-backdrop-filter: blur(12px);
+        }
+        :global(.dark) .glass-header-floating {
+             background: rgba(15, 23, 42, 0.95);
+             border-color: transparent;
+             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+        }
+        .floating-element {
+          animation: float 6s ease-in-out infinite;
+        }
       `}</style>
-      <main className="relative w-full bg-white text-slate-900">
-      {/* Header */}
-      <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-200 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          {/* Logo and Tagline */}
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-lg shadow-md">
-              <Activity className="text-white w-6 h-6" />
+      <main className="relative w-full bg-gradient-to-br from-slate-200 via-blue-100 to-slate-200 dark:from-slate-900 dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans transition-colors duration-500">
+      
+      {/* Floating Premium Header */}
+      <header className="fixed top-4 left-0 right-0 mx-auto w-[92%] max-w-7xl glass-header-floating rounded-2xl border border-white/60 dark:border-none shadow-lg shadow-blue-900/5 z-50 transition-all duration-300">
+        <div className="px-6 py-3 flex items-center justify-between">
+          <Link href="/landing" className="flex items-center gap-3 cursor-pointer">
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl shadow-lg shadow-blue-500/20">
+              <Activity className="text-white w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900">AnatoAI</h1>
-              <p className="text-xs font-medium text-slate-500">Interactive health assistant</p>
+              <h1 className="text-xl font-bold text-slate-900 dark:text-black tracking-tight leading-none">AnatoAI</h1>
+              <p className="text-[10px] font-bold text-blue-600 dark:text-blue-500 uppercase tracking-widest leading-none mt-0.5">Health Intelligence</p>
             </div>
-          </div>
+          </Link>
 
-          {/* Navigation */}
-          <nav className="flex items-center gap-8">
-            <Link href="#home" className="font-medium text-slate-600 hover:text-blue-600 transition-colors">
-              Home
-            </Link>
-            <Link href="#about" className="font-medium text-slate-600 hover:text-blue-600 transition-colors">
-              About
-            </Link>
-            <button
-              onClick={() => window.location.href = "/app"}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200"
-            >
-              Get Started
-            </button>
+          <nav className="hidden md:flex items-center gap-1 bg-slate-200 dark:bg-slate-700 p-1 rounded-full border border-slate-300 dark:border-none">
+            {["Home", "Features", "About"].map((item) => (
+              <Link 
+                key={item}
+                href={`#${item.toLowerCase()}`} 
+                className="px-5 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-700 dark:hover:text-slate-900 hover:bg-white dark:hover:bg-white rounded-full transition-all duration-200"
+              >
+                {item}
+              </Link>
+            ))}
           </nav>
+
+          <button
+            onClick={() => window.location.href = "/app"}
+            className="group px-6 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white dark:text-white text-sm font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-500/25 flex items-center gap-2"
+          >
+            Launch App 
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </button>
         </div>
       </header>
 
+      <ThemeToggle />
+
       {/* Hero Section */}
-      <section id="home" className="relative w-full h-screen flex items-center justify-center pt-20 overflow-hidden animated-hero-gradient">
+      <section id="home" className="relative w-full h-screen flex items-center justify-center pt-24 overflow-hidden animated-hero-gradient dark:!bg-none dark:bg-slate-950">
         {/* 3D Canvas - Background */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 opacity-100 dark:opacity-100 transition-opacity duration-500 bg-transparent">
+          {/* Subtle dark gradient for depth in dark mode - removes patchy white */}
+          <div className="absolute inset-0 bg-transparent dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 opacity-100 pointer-events-none" />
+          
           <Canvas
-            camera={{ position: [0, 0, 16], fov: 50 }}
+            camera={{ position: [0, 0, 16], fov: 45 }}
             gl={{ antialias: true, alpha: true }}
           >
             <Environment preset="studio" />
-            <ambientLight intensity={1} />
-            <directionalLight position={[10, 10, 10]} intensity={1.2} />
+            <ambientLight intensity={0.8} />
+            <directionalLight position={[5, 10, 5]} intensity={1.5} />
             
             <Suspense fallback={null}>
-              {/* Female Model - Left Corner */}
+              {/* Female Model - Left Corner - Counter Clockwise */}
               <GlowModelRotator
                 modelPath="/models/female/GlowBodyFemale.glb"
-                position={[-11, 0, 0]}
-                scale={7.5}
+                position={[-10, -0.5, 0]}
+                scale={7}
+                direction="counter-clockwise"
               />
               
-              {/* Male Model - Right Corner */}
+              {/* Male Model - Right Corner - Clockwise */}
               <GlowModelRotator
                 modelPath="/models/male/GlowBody.glb"
-                position={[11, 0, 0]}
-                scale={7.5}
+                position={[10, -0.5, 0]}
+                scale={7}
+                direction="clockwise"
               />
             </Suspense>
 
@@ -131,98 +165,130 @@ export default function LandingPage() {
         </div>
 
         {/* Content Overlay */}
-        <div className="relative z-10 flex flex-col items-center justify-center pointer-events-none px-6">
-          <AnimatedHeroText />
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto mt-[-5vh] pointer-events-none">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-slate-800/80 text-blue-700 dark:text-blue-300 text-xs font-bold tracking-wide mb-8 border border-blue-100 dark:border-blue-900 shadow-sm backdrop-blur-sm floating-element">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            NEXT-GEN HEALTH EDUCATION
+          </div>
           
-          <p className="mt-6 text-xl text-slate-600 max-w-2xl text-center leading-relaxed">
-            Interactive 3D Anatomy Models with AI-powered insights to understand human health better.
+          <div className="dark:text-white">
+            <AnimatedHeroText />
+          </div>
+          
+          <p className="mt-8 text-lg md:text-xl text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto font-medium">
+            Experience the human body like never before. Interactive 3D visualization combined with powerful AI diagnostics for a smarter, healthier you.
           </p>
 
-          <button
-            onClick={() => window.location.href = "/app"}
-            className="mt-10 px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 pointer-events-auto text-lg"
-          >
-            Start Exploring
-          </button>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="relative w-full py-24 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent mb-4">About AnatoAI</h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Combining cutting-edge 3D anatomical models with artificial intelligence
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">Advanced 3D Models</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Explore detailed, high-quality 3D models of the human body. Interactive visualization 
-                  allows you to examine anatomical structures from every angle, providing comprehensive 
-                  understanding of human anatomy.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">AI-Powered Insights</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Our advanced AI system provides intelligent, context-aware information about different 
-                  body parts. Get accurate medical information explained in simple, understandable language.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">Learn at Your Pace</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  Whether you're a student, healthcare professional, or health-conscious individual, 
-                  AnatoAI provides the information you need to understand human health and anatomy better.
-                </p>
-              </div>
-            </div>
-
-            {/* Right Content - Features */}
-            <div className="space-y-6">
-              <div className="bg-gradient-to-br from-blue-50 to-slate-50 p-8 rounded-2xl border border-blue-200">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
-                  <Activity className="text-white w-6 h-6" />
-                </div>
-                <h4 className="text-xl font-bold text-slate-900 mb-2">Interactive Learning</h4>
-                <p className="text-slate-600">
-                  Click on body parts to learn detailed information with AI-powered explanations.
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl border border-slate-200">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
-                  <Activity className="text-white w-6 h-6" />
-                </div>
-                <h4 className="text-xl font-bold text-slate-900 mb-2">Male & Female Models</h4>
-                <p className="text-slate-600">
-                  Explore anatomical differences between male and female body structures.
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-blue-50 to-slate-50 p-8 rounded-2xl border border-blue-200">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mb-4">
-                  <Activity className="text-white w-6 h-6" />
-                </div>
-                <h4 className="text-xl font-bold text-slate-900 mb-2">Health Education</h4>
-                <p className="text-slate-600">
-                  Improve your understanding of human anatomy and health with expert AI guidance.
-                </p>
-              </div>
-            </div>
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto">
+            <button
+              onClick={() => window.location.href = "/app"}
+              className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 text-lg flex items-center gap-3 transform hover:-translate-y-1"
+            >
+              Start Exploring <Activity className="w-5 h-5" />
+            </button>
+            <button className="px-8 py-4 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 hover:shadow-xl transition-all duration-300 text-lg border border-white dark:border-slate-700 backdrop-blur-sm">
+              Watch Demo
+            </button>
           </div>
         </div>
       </section>
 
-    
+      {/* Features / About Section (Condensed) */}
+      <section id="features" className="py-32 px-6 bg-white dark:bg-slate-900 relative z-10 transition-colors duration-500">
+        <div className="max-w-7xl mx-auto">
+           <div className="text-center mb-20">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-6 tracking-tight">Why Choose AnatoAI?</h2>
+            <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-xl">We bridge the gap between complex medical data and understandable visual insights.</p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { icon: Brain, title: "AI Intelligence", desc: "Powered by advanced LLMs to answer your health queries instantly with medical accuracy." },
+              { icon: Activity, title: "Real-time 3D", desc: "Interact with high-fidelity anatomical models. Rotate, zoom, and isolate specific body parts." },
+              { icon: Heart, title: "Holistic Health", desc: "Understand connections between different bodily systems and improved health literacy." }
+            ].map((feature, i) => (
+              <div key={i} className="group p-10 rounded-3xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 hover:border-blue-100 dark:hover:border-blue-700 hover:bg-gradient-to-br hover:from-white dark:hover:from-slate-700 hover:to-blue-50/30 dark:hover:to-blue-900/10 hover:shadow-2xl hover:shadow-blue-900/5 transition-all duration-500 relative overflow-hidden">
+                <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-50 dark:bg-blue-900/20 rounded-full group-hover:scale-150 transition-transform duration-700 ease-out" />
+                <div className="relative z-10">
+                  <div className="w-14 h-14 bg-white dark:bg-slate-700 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-600 flex items-center justify-center mb-8 text-blue-600 dark:text-blue-400 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <feature.icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">{feature.title}</h3>
+                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{feature.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Next Level Footer */}
+      <footer id="about" className="bg-slate-950 text-slate-300 pt-24 pb-12 px-6 border-t border-slate-800 relative overflow-hidden">
+        {/* Background Glow Effect */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid md:grid-cols-12 gap-12 mb-20">
+            {/* Brand Column */}
+            <div className="md:col-span-4 space-y-6">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-600 p-2.5 rounded-xl">
+                  <Activity className="text-white w-6 h-6" />
+                </div>
+                <span className="text-2xl font-bold text-white tracking-tight">AnatoAI</span>
+              </div>
+              <p className="text-slate-400 leading-relaxed">
+                Revolutionizing health education through interactive 3D visualization and artificial intelligence. 
+                Making anatomy accessible to everyone.
+              </p>
+              <div className="flex gap-4 pt-2">
+                {[Github, Twitter, Linkedin].map((Icon, i) => (
+                  <Link key={i} href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-blue-600 hover:border-blue-500 hover:text-white transition-all duration-300 group">
+                    <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Links Columns */}
+            <div className="md:col-span-2 md:col-start-7">
+              <h4 className="text-white font-bold mb-6">Product</h4>
+              <ul className="space-y-4 text-sm font-medium text-slate-400">
+                <li><Link href="#features" className="hover:text-blue-400 transition-colors">Features</Link></li>
+                <li><Link href="/app" className="hover:text-blue-400 transition-colors">Launch App</Link></li>
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Medical Data</Link></li>
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Case Studies</Link></li>
+              </ul>
+            </div>
+
+            <div className="md:col-span-2">
+              <h4 className="text-white font-bold mb-6">Company</h4>
+              <ul className="space-y-4 text-sm font-medium text-slate-400">
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">About Us</Link></li>
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Careers</Link></li>
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Blog</Link></li>
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Contact</Link></li>
+              </ul>
+            </div>
+
+            <div className="md:col-span-2">
+              <h4 className="text-white font-bold mb-6">Legal</h4>
+              <ul className="space-y-4 text-sm font-medium text-slate-400">
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
+                <li><Link href="#" className="hover:text-blue-400 transition-colors">Cookie Policy</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+            <p>© 2026 AnatoAI Inc. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </main>
     </>
   );
