@@ -103,7 +103,7 @@ export default function Scene({ onSelectPart, selectedPart, gender, viewMode }: 
           
           {/* Shadows adjusted for lighter background */}
           <ContactShadows position={[0, -1.6, 0]} resolution={1024} scale={10} blur={1.5} opacity={0.3} far={10} color="#1e3a8a" />
-          <Environment preset="sunset" />
+          <Environment preset="studio" />
           
           <Controls key={`${viewMode}-${gender}`} viewMode={viewMode} gender={gender} />
         </Suspense>
