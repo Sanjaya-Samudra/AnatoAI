@@ -4,8 +4,9 @@ import React, { useRef, useEffect, Suspense, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { GlowModelRotator } from "@/components/GlowModelRotator";
-import { Activity, Brain, Heart, Stethoscope, ArrowRight, Github, Twitter, Linkedin } from "lucide-react";
+import { Brain, Heart, Stethoscope, ArrowRight, Github, Twitter, Linkedin, Activity } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -90,11 +91,11 @@ export default function LandingPage() {
         <div className="px-6 py-3 flex items-center justify-between">
           <Link href="/landing" className="flex items-center gap-3 cursor-pointer">
             <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl shadow-lg shadow-blue-500/20">
-              <Activity className="text-white w-5 h-5" />
+              <Image src="/LOGO1.png" alt="AnatoAI Logo" width={20} height={20} className="brightness-0 invert" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 dark:text-black tracking-tight leading-none">AnatoAI</h1>
-              <p className="text-[10px] font-bold text-blue-600 dark:text-blue-500 uppercase tracking-widest leading-none mt-0.5">Health Intelligence</p>
+              <p className="text-[10px] font-bold text-blue-600 dark:text-blue-500 uppercase tracking-widest leading-none mt-0.5">INTERACTIVE HEALTH ASSISTANT</p>
             </div>
           </Link>
 
@@ -187,7 +188,7 @@ export default function LandingPage() {
               onClick={() => window.location.href = "/app"}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 text-lg flex items-center gap-3 transform hover:-translate-y-1"
             >
-              Start Exploring <Activity className="w-5 h-5" />
+              Start Exploring <Image src="/LOGO1.png" alt="Explore" width={20} height={20} className="brightness-0 invert" />
             </button>
             <button className="px-8 py-4 bg-white/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 hover:shadow-xl transition-all duration-300 text-lg border border-white dark:border-slate-700 backdrop-blur-sm">
               Watch Demo
@@ -226,66 +227,51 @@ export default function LandingPage() {
       </section>
 
       {/* Next Level Footer */}
-      <footer id="about" className="bg-slate-950 text-slate-300 pt-24 pb-12 px-6 border-t border-slate-800 relative overflow-hidden">
+      <footer id="about" className="bg-slate-950 text-slate-300 pt-12 pb-12 px-6 border-t border-slate-800 relative overflow-hidden">
         {/* Background Glow Effect */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid md:grid-cols-12 gap-12 mb-20">
+          <div className="grid md:grid-cols-2 gap-12 mb-12">
             {/* Brand Column */}
-            <div className="md:col-span-4 space-y-6">
+            <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="bg-blue-600 p-2.5 rounded-xl">
-                  <Activity className="text-white w-6 h-6" />
+                  <Image src="/LOGO1.png" alt="AnatoAI Logo" width={24} height={24} className="brightness-0 invert" />
                 </div>
                 <span className="text-2xl font-bold text-white tracking-tight">AnatoAI</span>
               </div>
               <p className="text-slate-400 leading-relaxed">
-                Revolutionizing health education through interactive 3D visualization and artificial intelligence. 
-                Making anatomy accessible to everyone.
+                Revolutionizing health education through interactive 3D visualization and artificial intelligence.
               </p>
               <div className="flex gap-4 pt-2">
-                {[Github, Twitter, Linkedin].map((Icon, i) => (
-                  <Link key={i} href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-blue-600 hover:border-blue-500 hover:text-white transition-all duration-300 group">
-                    <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  </Link>
-                ))}
+                <Link href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-blue-600 hover:border-blue-500 hover:text-white transition-all duration-300 group">
+                  <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </Link>
               </div>
             </div>
 
-            {/* Links Columns */}
-            <div className="md:col-span-2 md:col-start-7">
-              <h4 className="text-white font-bold mb-6">Product</h4>
-              <ul className="space-y-4 text-sm font-medium text-slate-400">
-                <li><Link href="#features" className="hover:text-blue-400 transition-colors">Features</Link></li>
-                <li><Link href="/app" className="hover:text-blue-400 transition-colors">Launch App</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Medical Data</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Case Studies</Link></li>
-              </ul>
-            </div>
-
-            <div className="md:col-span-2">
-              <h4 className="text-white font-bold mb-6">Company</h4>
-              <ul className="space-y-4 text-sm font-medium text-slate-400">
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">About Us</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Careers</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Blog</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-
-            <div className="md:col-span-2">
-              <h4 className="text-white font-bold mb-6">Legal</h4>
-              <ul className="space-y-4 text-sm font-medium text-slate-400">
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Cookie Policy</Link></li>
-              </ul>
+            {/* About Us Section */}
+            <div className="space-y-4">
+              <h4 className="text-white font-bold text-lg">About Us</h4>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-slate-400 text-sm">
+                    <span className="font-semibold text-blue-400">JthonX</span> - A team of passionate developers from the Faculty of Computing at the University of Sri Jayewardenepura, dedicated to revolutionizing health education through innovative technology.
+                  </p>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <p className="text-slate-300"><span className="font-semibold text-blue-400">Team Leader:</span> <span className="text-slate-400">Sanjaya Samudra</span></p>
+                  <p className="text-slate-300"><span className="font-semibold text-blue-400">Member:</span> <span className="text-slate-400">Praveen Tharuka</span></p>
+                  <p className="text-slate-300"><span className="font-semibold text-blue-400">Member:</span> <span className="text-slate-400">Yasas Chamod</span></p>
+                  <p className="text-slate-300"><span className="font-semibold text-blue-400">Member:</span> <span className="text-slate-400">Sithum Dineth</span></p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
-            <p>© 2026 AnatoAI Inc. All rights reserved.</p>
+          <div className="pt-6 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+            <p>© 2026 AnatoAI.</p>
           </div>
         </div>
       </footer>

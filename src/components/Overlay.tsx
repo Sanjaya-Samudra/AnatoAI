@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Activity, AlertCircle, Sparkles } from "lucide-react";
+import { X, Send, AlertCircle, Sparkles } from "lucide-react";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -104,7 +105,7 @@ export default function Overlay({ selectedPart, onClose, gender }: OverlayProps)
           <div className="p-6 border-b border-blue-200 dark:border-slate-800 flex justify-between items-center bg-gradient-to-r from-blue-50 to-white dark:from-slate-800 dark:to-slate-900 transition-colors duration-300">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-slate-700">
-                <Activity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <Image src="/LOGO1.png" alt="AnatoAI Logo" width={24} height={24} className="brightness-0 invert" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight font-sans">{selectedPart}</h2>
