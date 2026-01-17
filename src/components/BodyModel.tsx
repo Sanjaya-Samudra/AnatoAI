@@ -59,55 +59,6 @@ export const FEMALE_HEAD_PARTS: BodyPartConfig[] = [
   { name: "Neck", type: "capsule", position: [0, -1.00, 0], args: [0.105, 0.315, 4, 8] },
 ];
 
-// --- Torso Parts Configuration (Male) ---
-export const MALE_TORSO_PARTS: BodyPartConfig[] = [
-  // -- Chest Region (High) --
-  // Y dropped from 1.05 -> 0.95
-  // X widened from 0.15 -> 0.25
-  { name: "Pectorals (Chest)", type: "box", position: [0, 0.95, 0.2], args: [0.5, 0.25, 0.15] },
-  { name: "Sternum (Center)", type: "box", position: [0, 0.95, 0.25], args: [0.1, 0.25, 0.1] },
-  
-  // -- Upper Abdomen (Solar Plexus) --
-  // Y dropped from 0.85 -> 0.72
-  { name: "Epigastric (Upper Stomach)", type: "sphere", position: [0, 0.72, 0.22], args: [0.13, 16, 16] },
-  { name: "Right Hypochondriac (Liver)", type: "sphere", position: [-0.28, 0.72, 0.18], args: [0.12, 16, 16] },
-  { name: "Left Hypochondriac (Spleen)", type: "sphere", position: [0.28, 0.72, 0.18], args: [0.12, 16, 16] },
-
-  // -- Middle Abdomen (Navel Area) --
-  // Y dropped from 0.70 -> 0.48 (The Navel is much lower than I thought)
-  { name: "Umbilical (Navel)", type: "sphere", position: [0, 0.48, 0.23], args: [0.13, 16, 16] },
-  { name: "Right Lumbar (Kidney/Flank)", type: "sphere", position: [-0.30, 0.48, 0.18], args: [0.12, 16, 16] },
-  { name: "Left Lumbar (Kidney/Flank)", type: "sphere", position: [0.30, 0.48, 0.18], args: [0.12, 16, 16] },
-
-  // -- Lower Abdomen (Belt Line) --
-  // Y dropped from 0.55 -> 0.25
-  { name: "Hypogastric (Bladder)", type: "sphere", position: [0, 0.25, 0.21], args: [0.13, 16, 16] },
-  { name: "Right Iliac (Appendix)", type: "sphere", position: [-0.28, 0.25, 0.18], args: [0.12, 16, 16] },
-  { name: "Left Iliac (Colon)", type: "sphere", position: [0.28, 0.25, 0.18], args: [0.12, 16, 16] },
-];
-
-// --- Torso Parts Configuration (Female) ---
-export const FEMALE_TORSO_PARTS: BodyPartConfig[] = [
-  // -- Chest Region --
-  { name: "Chest/Breast", type: "box", position: [0, 0.92, 0.22], args: [0.45, 0.22, 0.15] },
-  { name: "Sternum (Center)", type: "box", position: [0, 0.92, 0.28], args: [0.08, 0.22, 0.1] },
-
-  // -- Upper Abdomen --
-  { name: "Epigastric (Upper Stomach)", type: "sphere", position: [0, 0.70, 0.19], args: [0.12, 16, 16] },
-  { name: "Right Hypochondriac (Liver)", type: "sphere", position: [-0.26, 0.70, 0.17], args: [0.11, 16, 16] },
-  { name: "Left Hypochondriac (Spleen)", type: "sphere", position: [0.26, 0.70, 0.17], args: [0.11, 16, 16] },
-
-  // -- Middle Abdomen --
-  { name: "Umbilical (Navel)", type: "sphere", position: [0, 0.48, 0.20], args: [0.12, 16, 16] },
-  { name: "Right Lumbar (Kidney/Flank)", type: "sphere", position: [-0.28, 0.48, 0.17], args: [0.11, 16, 16] },
-  { name: "Left Lumbar (Kidney/Flank)", type: "sphere", position: [0.28, 0.48, 0.17], args: [0.11, 16, 16] },
-
-  // -- Lower Abdomen --
-  { name: "Hypogastric (Bladder)", type: "sphere", position: [0, 0.25, 0.19], args: [0.12, 16, 16] },
-  { name: "Right Iliac (Appendix)", type: "sphere", position: [-0.26, 0.25, 0.17], args: [0.11, 16, 16] },
-  { name: "Left Iliac (Colon)", type: "sphere", position: [0.26, 0.25, 0.17], args: [0.11, 16, 16] },
-];
-
 // ==========================================
 // 2. TORSO CONFIGURATION (Fixed Depth)
 // ==========================================
@@ -115,44 +66,58 @@ export const FEMALE_TORSO_PARTS: BodyPartConfig[] = [
 export const MALE_TORSO_PARTS: BodyPartConfig[] = [
   // -- Chest --
   // Z moved to 0.3 to sit on top of pecs
-  { name: "Pectorals (Chest)", type: "box", position: [0, 0.50, 0.3], args: [0.5, 0.25, 0.15] },
-  { name: "Sternum (Center)", type: "box", position: [0, 0.30, 0.28], args: [0.1, 0.25, 0.1] },
+  { name: "Pectorals (Chest)", type: "box", position: [0, 0.50, 0.9], args: [0.5, 0.25, 0.15] },
+  { name: "Sternum (Center)", type: "box", position: [0, 0.30, 0.9], args: [0.1, 0.25, 0.1] },
+  { name: "Right Shoulder", type: "sphere", position: [-0.4, 1.1, 0.9], args: [0.1, 16, 16] },
+  { name: "Left Shoulder", type: "sphere", position: [0.4, 1.1, 0.9], args: [0.1, 16, 16] },
   
   // -- Upper Abdomen --
-  { name: "Epigastric (Upper Stomach)", type: "sphere", position: [0, -0.1, 0.28], args: [0.13, 16, 16] },
-  { name: "Right Hypochondriac (Liver)", type: "sphere", position: [-0.28, -0.1, 0.25], args: [0.12, 16, 16] },
-  { name: "Left Hypochondriac (Spleen)", type: "sphere", position: [0.28, -0.1, 0.25], args: [0.12, 16, 16] },
+  { name: "Epigastric (Upper Stomach)", type: "sphere", position: [0, -0.1, 0.9], args: [0.13, 16, 16] },
+  { name: "Right Hypochondriac (Liver)", type: "sphere", position: [-0.28, -0.1, 0.9], args: [0.12, 16, 16] },
+  { name: "Left Hypochondriac (Spleen)", type: "sphere", position: [0.28, -0.1, 0.9], args: [0.12, 16, 16] },
   
   // -- Middle Abdomen --
-  { name: "Umbilical (Navel)", type: "sphere", position: [0, -0.9, 0.3], args: [0.13, 16, 16] },
-  { name: "Right Lumbar (Kidney/Flank)", type: "sphere", position: [-0.30, -0.60, 0.25], args: [0.12, 16, 16] },
-  { name: "Left Lumbar (Kidney/Flank)", type: "sphere", position: [0.30, -0.60, 0.25], args: [0.12, 16, 16] },
+  { name: "Umbilical (Navel)", type: "sphere", position: [0, -0.9, 0.9], args: [0.13, 16, 16] },
+  { name: "Right Lumbar (Kidney/Flank)", type: "sphere", position: [-0.30, -0.60, 0.9], args: [0.12, 16, 16] },
+  { name: "Left Lumbar (Kidney/Flank)", type: "sphere", position: [0.30, -0.60, 0.9], args: [0.12, 16, 16] },
   
   // -- Lower Abdomen --
-  { name: "Hypogastric (Bladder)", type: "sphere", position: [0, -1.25, 0.28], args: [0.13, 16, 16] },
-  { name: "Right Iliac (Appendix)", type: "sphere", position: [-0.28, -1.20, 0.25], args: [0.12, 16, 16] },
-  { name: "Left Iliac (Colon)", type: "sphere", position: [0.28, -1.20, 0.25], args: [0.12, 16, 16] },
+  { name: "Hypogastric (Bladder)", type: "sphere", position: [0, -1.25, 0.9], args: [0.13, 16, 16] },
+  { name: "Right Iliac (Appendix)", type: "sphere", position: [-0.28, -1.20, 0.9], args: [0.12, 16, 16] },
+  { name: "Left Iliac (Colon)", type: "sphere", position: [0.28, -1.20, 0.9], args: [0.12, 16, 16] },
+
+  // -- Back --
+  { name: "Upper Back", type: "sphere", position: [0, 0.6, -0.9], args: [0.12, 16, 16] },
+  { name: "Middle Back", type: "sphere", position: [0, 0.2, -0.9], args: [0.12, 16, 16] },
+  { name: "Lower Back", type: "sphere", position: [0, -0.2, -0.9], args: [0.12, 16, 16] },
 ];
 
 export const FEMALE_TORSO_PARTS: BodyPartConfig[] = [
   // -- Chest --
-  { name: "Breasts (Chest)", type: "box", position: [0, 0.50, 0.3], args: [0.45, 0.22, 0.15] },
-  { name: "Sternum (Center)", type: "box", position: [0, 0.30, 0.32], args: [0.08, 0.22, 0.1] },
+  { name: "Breasts (Chest)", type: "box", position: [0, 0.50, 0.9], args: [0.45, 0.22, 0.15] },
+  { name: "Sternum (Center)", type: "box", position: [0, 0.30, 0.9], args: [0.08, 0.22, 0.1] },
+  { name: "Right Shoulder", type: "sphere", position: [-0.4, 1.1, 0.5], args: [0.1, 16, 16] },
+  { name: "Left Shoulder", type: "sphere", position: [0.4, 1.1, 0.5], args: [0.1, 16, 16] },
   
   // -- Upper Abdomen --
-  { name: "Epigastric (Upper Stomach)", type: "sphere", position: [0, -0.10, 0.25], args: [0.12, 16, 16] },
-  { name: "Right Hypochondriac (Liver)", type: "sphere", position: [-0.28, -0.10, 0.22], args: [0.11, 16, 16] },
-  { name: "Left Hypochondriac (Spleen)", type: "sphere", position: [0.28, -0.10, 0.22], args: [0.11, 16, 16] },
+  { name: "Epigastric (Upper Stomach)", type: "sphere", position: [0, -0.10, 0.9], args: [0.12, 16, 16] },
+  { name: "Right Hypochondriac (Liver)", type: "sphere", position: [-0.28, -0.10, 0.9], args: [0.11, 16, 16] },
+  { name: "Left Hypochondriac (Spleen)", type: "sphere", position: [0.28, -0.10, 0.9], args: [0.11, 16, 16] },
   
   // -- Middle Abdomen --
-  { name: "Umbilical (Navel)", type: "sphere", position: [0, 0.48, 0.26], args: [0.12, 16, 16] },
-  { name: "Right Lumbar (Kidney/Flank)", type: "sphere", position: [-0.30, 0.48, 0.22], args: [0.11, 16, 16] },
-  { name: "Left Lumbar (Kidney/Flank)", type: "sphere", position: [0.30, 0.48, 0.22], args: [0.11, 16, 16] },
+  { name: "Umbilical (Navel)", type: "sphere", position: [0, -0.8, 0.9], args: [0.12, 16, 16] },
+  { name: "Right Lumbar (Kidney/Flank)", type: "sphere", position: [-0.30, -0.7, 0.9], args: [0.11, 16, 16] },
+  { name: "Left Lumbar (Kidney/Flank)", type: "sphere", position: [0.30, -0.7, 0.9], args: [0.11, 16, 16] },
   
   // -- Lower Abdomen --
-  { name: "Hypogastric (Bladder/Uterus)", type: "sphere", position: [0, 0.25, 0.24], args: [0.12, 16, 16] },
-  { name: "Right Iliac (Appendix/Ovary)", type: "sphere", position: [-0.28, 0.25, 0.22], args: [0.11, 16, 16] },
-  { name: "Left Iliac (Colon/Ovary)", type: "sphere", position: [0.28, 0.25, 0.22], args: [0.11, 16, 16] },
+  { name: "Hypogastric (Bladder/Uterus)", type: "sphere", position: [0, -1.2, 0.9], args: [0.12, 16, 16] },
+  { name: "Right Iliac (Appendix/Ovary)", type: "sphere", position: [-0.28, -1.2, 0.9], args: [0.11, 16, 16] },
+  { name: "Left Iliac (Colon/Ovary)", type: "sphere", position: [0.28, -1.2, 0.9], args: [0.11, 16, 16] },
+
+  // -- Back --
+  { name: "Upper Back", type: "sphere", position: [0, 0.6, -0.9], args: [0.12, 16, 16] },
+  { name: "Middle Back", type: "sphere", position: [0, 0.2, -0.9], args: [0.12, 16, 16] },
+  { name: "Lower Back", type: "sphere", position: [0, -0.2, -0.9], args: [0.12, 16, 16] },
 ];
 
 // ==========================================
