@@ -49,6 +49,49 @@ export const FEMALE_BODY_PARTS: BodyPartConfig[] = [
   { name: "Right Leg", type: "capsule", position: [-0.25, -0.55, -0.05], args: [0.14, 1.4, 4, 8] },
 ];
 
+export const HEAD_POINTS: BodyPartConfig[] = [
+  // 1. TOP OF HEAD
+  { name: "Frontal Vertex", type: "sphere", position: [0, 1.4, 0.7], args: [0.06, 16, 16] }, // Moved forward +0.1
+  { name: "Central Vertex (Crown)", type: "sphere", position: [0, 1.6, 0], args: [0.06, 16, 16] }, // Moved up
+  { name: "Right Parietal Region", type: "sphere", position: [-0.64, 1.4, 0], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Parietal Region", type: "sphere", position: [0.64, 1.4, 0], args: [0.06, 16, 16] }, // Corrected Name
+
+  // 2. FOREHEAD & FRONT FACE
+  { name: "Central Forehead (Glabella)", type: "sphere", position: [0, 0.52, 1.03], args: [0.06, 16, 16] }, // Moved forward significantly
+  { name: "Right Frontal Region", type: "sphere", position: [-0.48, 0.84, 0.82], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Frontal Region", type: "sphere", position: [0.48, 0.84, 0.82], args: [0.06, 16, 16] }, // Corrected Name
+
+  // 3. EYES & ORBITAL AREA
+  { name: "Right Supraorbital Area", type: "sphere", position: [-0.32, 0.57, 0.98], args: [0.05, 16, 16] }, // Corrected Name
+  { name: "Left Supraorbital Area", type: "sphere", position: [0.32, 0.57, 0.98], args: [0.05, 16, 16] }, // Corrected Name
+
+  // 4. TEMPLES
+  { name: "Right Temporal Region", type: "sphere", position: [-0.68, 0.40, 0.32], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Temporal Region", type: "sphere", position: [0.68, 0.40, 0.32], args: [0.06, 16, 16] }, // Corrected Name
+
+  // 5. EARS & JAW AREA
+  { name: "Right Preauricular Area", type: "sphere", position: [-0.72, 0.1, 0.02], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Preauricular Area", type: "sphere", position: [0.72, 0.1, 0.02], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Right Jaw Angle", type: "sphere", position: [-0.68, -0.34, 0.08], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Jaw Angle", type: "sphere", position: [0.68, -0.34, 0.08], args: [0.06, 16, 16] }, // Corrected Name
+
+  // 6. MOUTH & CHIN
+  { name: "Upper Lip / Maxillary", type: "sphere", position: [0, -0.32, 1.02], args: [0.05, 16, 16] }, // Moved fwd
+  { name: "Chin (Mental Region)", type: "sphere", position: [0.01, -0.84, 0.88], args: [0.06, 16, 16] }, // Moved fwd
+
+  // 7. BACK OF HEAD
+  { name: "Right Occipital Region", type: "sphere", position: [-0.6, -0.2, -0.82], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Occipital Region", type: "sphere", position: [0.6, -0.2, -0.82], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Central Occipital", type: "sphere", position: [0, -0.25, -1.05], args: [0.06, 16, 16] }, // Moved back
+
+  // 8. NECK AREA
+  { name: "Posterior Neck (Midline)", type: "sphere", position: [0, -0.78, -1.12], args: [0.06, 16, 16] }, // Moved back
+  { name: "Right Posterolateral Neck", type: "sphere", position: [-0.68, -0.84, -0.82], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Posterolateral Neck", type: "sphere", position: [0.68, -0.84, -0.82], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Right Lateral Neck", type: "sphere", position: [-0.6, -1.08, -0.22], args: [0.06, 16, 16] }, // Corrected Name
+  { name: "Left Lateral Neck", type: "sphere", position: [0.6, -1.08, -0.22], args: [0.06, 16, 16] }, // Corrected Name
+];
+
 // --- Components ---
 
 interface BodyPartProps {
@@ -103,13 +146,15 @@ const BodyPart: React.FC<BodyPartProps> = ({
 
       {/* Center Pinpoint Marker (Always visible inside) */}
       <mesh>
-        <sphereGeometry args={[0.03, 16, 16]} />
-        <meshBasicMaterial 
-            color={isSelected ? "#2563eb" : (hovered ? "#3b82f6" : "#ffffff")}
-            transparent 
-            opacity={0.9} 
-            depthTest={false} // Visible through the body
-            depthWrite={false}
+        <sphereGeometry args={[0.07, 16, 16]} />
+        <meshStandardMaterial 
+            color={isSelected ? "#ea384c" : (hovered ? "#3b82f6" : "#cbd5e1")} // Red selected, Blue hover, Slate-300 default
+            transparent={false} // Solid material, not transparent
+            opacity={1} 
+            depthTest={true} // Uses depth buffer so it gets occluded by body geometry
+            depthWrite={true}
+            roughness={0.5}
+            metalness={0.2}
         />
       </mesh>
       
@@ -285,6 +330,20 @@ export const BodyModel: React.FC<BodyModelProps> = ({
             selectedPart={selectedPart}
           />
         ))}
+
+        {viewMode === "head" && HEAD_POINTS.map((part) => (
+          <BodyPart
+            key={part.name}
+            position={part.position}
+            args={part.args as [number, number, number] | [number, number, number, number]}
+            name={part.name}
+            type={part.type}
+            rotation={part.rotation}
+            onSelect={onSelectPart}
+            selectedPart={selectedPart}
+          />
+        ))}
+
       </group>
     </group>
   );
