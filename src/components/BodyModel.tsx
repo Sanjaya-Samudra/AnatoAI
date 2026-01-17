@@ -128,6 +128,7 @@ interface BodyPartProps {
   selectedPart: string | null;
   type: "capsule" | "sphere" | "box";
   rotation?: [number, number, number];
+  markerRadius?: number;
 }
 
 const BodyPart: React.FC<BodyPartProps> = ({
@@ -138,6 +139,7 @@ const BodyPart: React.FC<BodyPartProps> = ({
   selectedPart,
   type,
   rotation = [0, 0, 0],
+  markerRadius = 0.07,
 }) => {
   const [hovered, setHover] = useState(false);
   const isSelected = selectedPart === name;
@@ -172,14 +174,13 @@ const BodyPart: React.FC<BodyPartProps> = ({
 
       {/* Center Pinpoint Marker (Always visible inside) */}
       <mesh>
-        <sphereGeometry args={[0.07, 16, 16]} />
-        {/* FIXED: depthTest={false} ensures the white dot renders ON TOP of the body */}
+        <sphereGeometry args={[markerRadius, 16, 16]} />
         <meshStandardMaterial 
-            color={isSelected ? "#ea384c" : (hovered ? "#3b82f6" : "#cbd5e1")}
-            transparent={true} // Set transparent true so it blends nicely if we want opacity
-            opacity={0.9} 
-            depthTest={false}  // <--- KEY FIX: Disable depth test to see through body
-            depthWrite={false} // <--- KEY FIX: Don't write to depth buffer
+            color={isSelected ? "#ea384c" : (hovered ? "#3b82f6" : "#cbd5e1")} // Red selected, Blue hover, Slate-300 default
+            transparent={false}
+            opacity={1} 
+            depthTest={true}
+            depthWrite={true}
             roughness={0.5}
             metalness={0.2}
         />
@@ -338,6 +339,7 @@ export const BodyModel: React.FC<BodyModelProps> = ({
             rotation={part.rotation}
             onSelect={onSelectPart}
             selectedPart={selectedPart}
+            markerRadius={0.04} // Smaller markers for full body view
           />
         ))}
 
