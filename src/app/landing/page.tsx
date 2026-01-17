@@ -6,6 +6,7 @@ import { OrbitControls, Environment } from "@react-three/drei";
 import { GlowModelRotator } from "@/components/GlowModelRotator";
 import { Activity, Brain, Heart, Stethoscope, ArrowRight, Github, Twitter, Linkedin } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -89,8 +90,13 @@ export default function LandingPage() {
       <header className="fixed top-4 left-0 right-0 mx-auto w-[92%] max-w-7xl glass-header-floating rounded-2xl border border-white/60 dark:border-none shadow-lg shadow-blue-900/5 z-50 transition-all duration-300">
         <div className="px-6 py-3 flex items-center justify-between">
           <Link href="/landing" className="flex items-center gap-3 cursor-pointer">
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl shadow-lg shadow-blue-500/20">
-              <Activity className="text-white w-5 h-5" />
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-blue-500/20 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+              <Image 
+                src="/Asset-2.png" 
+                alt="AnatoAI Logo" 
+                fill
+                className="object-contain p-1.5"
+              />
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 dark:text-black tracking-tight leading-none">AnatoAI</h1>

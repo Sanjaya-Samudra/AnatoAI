@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Send, Activity, AlertCircle, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import Image from "next/image";
 
 interface Message {
   role: "user" | "assistant";
@@ -103,8 +104,13 @@ export default function Overlay({ selectedPart, onClose, gender }: OverlayProps)
           {/* Header */}
           <div className="p-6 border-b border-blue-200 dark:border-slate-800 flex justify-between items-center bg-gradient-to-r from-blue-50 to-white dark:from-slate-800 dark:to-slate-900 transition-colors duration-300">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-slate-700">
-                <Activity className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-md shadow-blue-500/20 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shrink-0">
+                <Image 
+                  src="/Asset-2.png" 
+                  alt="AnatoAI Logo" 
+                  fill
+                  className="object-contain p-1.5"
+                />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight font-sans">{selectedPart}</h2>
