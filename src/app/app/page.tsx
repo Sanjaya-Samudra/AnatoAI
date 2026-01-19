@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import Scene from "@/components/Scene";
 import Overlay from "@/components/Overlay";
-import { Activity } from "lucide-react";
+import { Activity, MessageCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NavigationRail } from "@/components/NavigationRail";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AppPage() {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
@@ -43,8 +44,13 @@ export default function AppPage() {
         <div className="px-6 py-4 flex justify-between items-center pointer-events-auto max-w-7xl mx-auto">
           {/* Logo and Tagline */}
           <Link href="/landing" className="flex items-center gap-4 cursor-pointer">
-            <div className="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/30">
-              <Activity className="text-white w-6 h-6" />
+            <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-lg shadow-blue-500/30 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+              <Image 
+                src="/Asset-2.png" 
+                alt="AnatoAI Logo" 
+                fill
+                className="object-contain p-2"
+              />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight font-sans">AnatoAI</h1>
@@ -82,6 +88,17 @@ export default function AppPage() {
       <NavigationRail onSelect={handleSidebarClick} activeMode={viewMode} />
 
       <ThemeToggle />
+
+      {/* Chatbot Toggle Button */}
+      <button
+        onClick={() => setSelectedPart("AnatoAI Assistant")}
+        className={`fixed bottom-6 right-6 z-40 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all duration-300 group shadow-blue-500/30 hover:scale-110 ${
+          selectedPart ? "opacity-0 scale-0 pointer-events-none" : "opacity-100 scale-100"
+        }`}
+        aria-label="Open Chat Assistant"
+      >
+        <MessageCircle className="w-6 h-6" />
+      </button>
 
       {/* 3D Scene */}
       <div className="absolute inset-0 z-0">

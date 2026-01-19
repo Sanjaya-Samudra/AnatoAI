@@ -1,0 +1,23 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Geometric Right Hand (Thumb on Right) - Fingers Shifted Left 18px -->
+  <!-- Order from Left: Pinky, Ring, Middle, Index, Thumb -->
+  <g fill="currentColor">
+    <!-- Palm Base -->
+    <rect x="130" y="250" width="230" height="220" rx="45" />
+    
+    <!-- Pinky Finger (Leftmost - Shortest) -->
+    <rect x="125" y="145" width="48" height="155" rx="24" />
+    
+    <!-- Ring Finger (Second - Tall) -->
+    <rect x="185" y="60" width="52" height="250" rx="26" />
+    
+    <!-- Middle Finger (Third - Tallest) -->
+    <rect x="247" y="30" width="54" height="280" rx="27" />
+    
+    <!-- Index Finger (Rightmost Vertical - Shorter than Middle) -->
+    <rect x="310" y="70" width="52" height="240" rx="26" />
+    
+    <!-- Thumb (Right Side - Angled) -->
+    <rect x="345" y="295" width="55" height="150" rx="27" transform="rotate(40 372 370)" />
+  </g>
+</svg>

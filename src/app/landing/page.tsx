@@ -4,8 +4,9 @@ import React, { useRef, useEffect, Suspense, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Environment } from "@react-three/drei";
 import { GlowModelRotator } from "@/components/GlowModelRotator";
-import { Activity, Brain, Heart, Stethoscope, ArrowRight, Github, Twitter, Linkedin } from "lucide-react";
+import { Activity, Brain, Heart, Stethoscope, ArrowRight, Github } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -89,8 +90,13 @@ export default function LandingPage() {
       <header className="fixed top-4 left-0 right-0 mx-auto w-[92%] max-w-7xl glass-header-floating rounded-2xl border border-white/60 dark:border-none shadow-lg shadow-blue-900/5 z-50 transition-all duration-300">
         <div className="px-6 py-3 flex items-center justify-between">
           <Link href="/landing" className="flex items-center gap-3 cursor-pointer">
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 p-2 rounded-xl shadow-lg shadow-blue-500/20">
-              <Activity className="text-white w-5 h-5" />
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-blue-500/20 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
+              <Image 
+                src="/Asset-2.png" 
+                alt="AnatoAI Logo" 
+                fill
+                className="object-contain p-1.5"
+              />
             </div>
             <div>
               <h1 className="text-xl font-bold text-slate-900 dark:text-black tracking-tight leading-none">AnatoAI</h1>
@@ -226,65 +232,70 @@ export default function LandingPage() {
       </section>
 
       {/* Next Level Footer */}
-      <footer id="about" className="bg-slate-950 text-slate-300 pt-24 pb-12 px-6 border-t border-slate-800 relative overflow-hidden">
+      <footer id="about" className="bg-slate-950 text-slate-300 py-12 px-6 border-t border-slate-800 relative overflow-hidden">
         {/* Background Glow Effect */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-64 bg-blue-600/10 blur-[120px] rounded-full pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid md:grid-cols-12 gap-12 mb-20">
-            {/* Brand Column */}
-            <div className="md:col-span-4 space-y-6">
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="flex flex-col items-center justify-center text-center gap-8 mb-8">
+            {/* Brand Section */}
+            <div className="space-y-4 flex flex-col items-center">
               <div className="flex items-center gap-3">
-                <div className="bg-blue-600 p-2.5 rounded-xl">
-                  <Activity className="text-white w-6 h-6" />
+                <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-lg shadow-blue-900/20 bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shrink-0">
+                  <Image 
+                    src="/Asset-2.png" 
+                    alt="AnatoAI Logo" 
+                    fill
+                    className="object-contain p-2"
+                  />
                 </div>
                 <span className="text-2xl font-bold text-white tracking-tight">AnatoAI</span>
               </div>
-              <p className="text-slate-400 leading-relaxed">
-                Revolutionizing health education through interactive 3D visualization and artificial intelligence. 
-                Making anatomy accessible to everyone.
+              <p className="text-slate-400 leading-relaxed max-w-lg">
+                Revolutionizing health education through interactive 3D visualization and artificial intelligence.
               </p>
-              <div className="flex gap-4 pt-2">
-                {[Github, Twitter, Linkedin].map((Icon, i) => (
-                  <Link key={i} href="#" className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-blue-600 hover:border-blue-500 hover:text-white transition-all duration-300 group">
-                    <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                  </Link>
-                ))}
-              </div>
             </div>
 
-            {/* Links Columns */}
-            <div className="md:col-span-2 md:col-start-7">
-              <h4 className="text-white font-bold mb-6">Product</h4>
-              <ul className="space-y-4 text-sm font-medium text-slate-400">
-                <li><Link href="#features" className="hover:text-blue-400 transition-colors">Features</Link></li>
-                <li><Link href="/app" className="hover:text-blue-400 transition-colors">Launch App</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Medical Data</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Case Studies</Link></li>
-              </ul>
+            {/* GitHub - Central Divider */}
+            <div>
+               <Link 
+                  href="https://github.com/Sanjaya-Samudra/AnatoAI" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center hover:bg-blue-600 hover:border-blue-500 hover:text-white transition-all duration-300 group shadow-lg shadow-blue-900/10"
+                >
+                  <Github className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                </Link>
             </div>
 
-            <div className="md:col-span-2">
-              <h4 className="text-white font-bold mb-6">Company</h4>
-              <ul className="space-y-4 text-sm font-medium text-slate-400">
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">About Us</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Careers</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Blog</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-
-            <div className="md:col-span-2">
-              <h4 className="text-white font-bold mb-6">Legal</h4>
-              <ul className="space-y-4 text-sm font-medium text-slate-400">
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Terms of Service</Link></li>
-                <li><Link href="#" className="hover:text-blue-400 transition-colors">Cookie Policy</Link></li>
+            {/* Team Section */}
+            <div className="flex flex-col items-center w-full">
+              <h4 className="text-white font-bold mb-6 text-xl flex items-center gap-2">
+                <span className="bg-blue-500/10 text-blue-400 py-1 px-3 rounded-lg text-sm uppercase tracking-wider">Team</span>
+                JthonX
+              </h4>
+              <ul className="space-y-3 text-sm font-medium text-slate-300 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
+                <li className="flex items-center gap-2 group whitespace-nowrap">
+                   <div className="w-2 h-2 rounded-full bg-blue-600 group-hover:bg-blue-400 transition-colors shrink-0"></div>
+                   <span className="group-hover:text-white transition-colors">Sanjaya Samudra</span>
+                </li>
+                <li className="flex items-center gap-2 group whitespace-nowrap">
+                   <div className="w-2 h-2 rounded-full bg-blue-600 group-hover:bg-blue-400 transition-colors shrink-0"></div>
+                   <span className="group-hover:text-white transition-colors">Praveen Tharuka</span>
+                </li>
+                <li className="flex items-center gap-2 group whitespace-nowrap">
+                   <div className="w-2 h-2 rounded-full bg-blue-600 group-hover:bg-blue-400 transition-colors shrink-0"></div>
+                   <span className="group-hover:text-white transition-colors">Yasas Chamod</span>
+                </li>
+                <li className="flex items-center gap-2 group whitespace-nowrap">
+                   <div className="w-2 h-2 rounded-full bg-blue-600 group-hover:bg-blue-400 transition-colors shrink-0"></div>
+                   <span className="group-hover:text-white transition-colors">Sithum Dineth</span>
+                </li>
               </ul>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+          <div className="pt-6 border-t border-slate-800/50 flex justify-center text-sm text-slate-500">
             <p>© 2026 AnatoAI Inc. All rights reserved.</p>
           </div>
         </div>
