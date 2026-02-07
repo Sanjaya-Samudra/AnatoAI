@@ -295,6 +295,62 @@ export const FEMALE_RIGHT_ARM_PARTS: BodyPartConfig[] = [
 ];
 
 // ==========================================
+// 6. LEFT LEG CONFIGURATION
+// ==========================================
+
+export const MALE_LEFT_LEG_PARTS: BodyPartConfig[] = [
+  { name: "Thigh (Femoral)", type: "capsule", position: [0, 1, 0.22], args: [0.15, 0.8, 4, 8] },
+   { name: "Hip (Coxal region)", type: "capsule", position: [-0.1, 1.5, -0.53], args: [0.11, 0.7, 4, 8] }, 
+  { name: "Knee (Patellar)", type: "sphere", position: [0.1, 0.3, 0.12], args: [0.12, 16, 16] },
+  { name: "Calf (Sural)", type: "capsule", position: [-0.1, -0.25, -0.42], args: [0.12, 0.8, 4, 8] },
+  { name: "Front Leg (Crural region)", type: "capsule", position: [0.18, -0.35, -0.08], args: [0.12, 0.8, 4, 8] },
+  { name: "Ankle (Tarsal)", type: "sphere", position: [-0.01, -1.15, -0.18], args: [0.1, 16, 16] },
+  { name: "Top of Foot (Dorsal region)", type: "box", position: [0.2, -1.29, 0.16], args: [0.25, 0.08, 0.5] },
+  { name: "Foot (Pedal / Pedal region)", type: "box", position: [0.05, -1.5, 0.05], args: [0.23, 0.08, 0.45] },
+  { name: "Toes (Phalanges)", type: "box", position: [0.3, -1.45, 0.6], args: [0.25, 0.08, 0.2] },
+];
+
+export const FEMALE_LEFT_LEG_PARTS: BodyPartConfig[] = [
+  { name: "Thigh (Femoral)", type: "capsule", position: [0, 1.1, 0.28], args: [0.14, 0.7, 4, 8] },
+  { name: "Hip (Coxal region)", type: "capsule", position: [0.02, 1.5, -0.46], args: [0.11, 0.7, 4, 8] },
+  { name: "Knee (Patellar)", type: "sphere", position: [0, 0.5, 0.22], args: [0.11, 16, 16] },
+  { name: "Calf (Sural)", type: "capsule", position: [-0.15, -0.2, -0.35], args: [0.11, 0.7, 4, 8] },
+  { name: "Front Leg (Crural region)", type: "capsule", position: [0.05, -0.35, 0.02], args: [0.12, 0.8, 4, 8] },
+  { name: "Ankle (Tarsal)", type: "sphere", position: [-0.13, -1.08, -0.1], args: [0.09, 16, 16] },
+  { name: "Top of Foot (Dorsal region)", type: "box", position: [0.032, -1.34, 0.18], args: [0.23, 0.08, 0.45] },
+  { name: "Foot (Pedal / Pedal region)", type: "box", position: [-0.13, -1.45, 0], args: [0.23, 0.08, 0.45] },
+  { name: "Toes (Phalanges)", type: "box", position: [0.08, -1.48, 0.56], args: [0.23, 0.08, 0.18] },
+];
+
+// ==========================================
+// 6. RIGHT LEFT LEG CONFIGURATION
+// ==========================================
+
+export const MALE_RIGHT_LEG_PARTS: BodyPartConfig[] = [
+  { name: "Thigh (Femoral)", type: "capsule", position: [0, 1, 0.22], args: [0.15, 0.8, 4, 8] },
+   { name: "Hip (Coxal region)", type: "capsule", position: [0.15, 1.5, -0.52], args: [0.11, 0.7, 4, 8] }, 
+  { name: "Knee (Patellar)", type: "sphere", position: [-0.1, 0.3, 0.12], args: [0.12, 16, 16] },
+  { name: "Calf (Sural)", type: "capsule", position: [0.14, -0.25, -0.38], args: [0.12, 0.8, 4, 8] },
+  { name: "Leg (Crural region)", type: "capsule", position: [-0.12, -0.35, -0.08], args: [0.12, 0.8, 4, 8] },
+  { name: "Ankle (Tarsal)", type: "sphere", position: [0.03, -1.15, -0.2], args: [0.1, 16, 16] },
+  { name: "Top of Foot (Dorsal region)", type: "box", position: [-0.18, -1.3, 0.15], args: [0.25, 0.08, 0.5] },
+  { name: "Foot (Pedal / Pedal region)", type: "box", position: [-0.05, -1.5, 0.1], args: [0.23, 0.08, 0.45] },
+  { name: "Toes (Phalanges)", type: "box", position: [-0.25, -1.45, 0.65], args: [0.25, 0.08, 0.2] },
+];
+
+export const FEMALE_RIGHT_LEG_PARTS: BodyPartConfig[] = [
+  { name: "Thigh (Femoral)", type: "capsule", position: [0, 1.1, 0.27], args: [0.14, 0.7, 4, 8] },
+  { name: "Hip (Coxal region)", type: "capsule", position: [0.15, 1.5, -0.43], args: [0.11, 0.7, 4, 8] },
+  { name: "Knee (Patellar)", type: "sphere", position: [0, 0.5, 0.22], args: [0.11, 16, 16] },
+  { name: "Calf (Sural)", type: "capsule", position: [0.15, -0.2, -0.33], args: [0.11, 0.7, 4, 8] },
+  { name: "Front Leg (Crural region)", type: "capsule", position: [0, -0.35, 0.03], args: [0.12, 0.8, 4, 8] },
+  { name: "Ankle (Tarsal)", type: "sphere", position: [0.13, -1.1, -0.12], args: [0.09, 16, 16] },
+  { name: "Top of Foot (Dorsal region)", type: "box", position: [-0.025, -1.3, 0.13], args: [0.23, 0.08, 0.45] },
+  { name: "Foot (Pedal / Pedal region)", type: "box", position: [0.15, -1.4, 0], args: [0.23, 0.08, 0.45] },
+  { name: "Toes (Phalanges)", type: "box", position: [-0.07, -1.45, 0.54], args: [0.23, 0.08, 0.18] },
+];
+
+// ==========================================
 // 4. COMPONENTS
 // ==========================================
 
@@ -576,6 +632,34 @@ export const BodyModel: React.FC<BodyModelProps> = ({
             selectedPart={selectedPart}
           />
         ))}
+        {/* 6. Left Leg View */}
+        {viewMode === "left-leg" && (gender === "male" ? MALE_LEFT_LEG_PARTS : FEMALE_LEFT_LEG_PARTS).map((part) => (
+          <BodyPart
+            key={part.name}
+            position={part.position}
+            args={part.args as [number, number, number] | [number, number, number, number]}
+            name={part.name}
+            type={part.type}
+            rotation={part.rotation}
+            onSelect={onSelectPart}
+            selectedPart={selectedPart}
+          />
+        ))}
+
+        {/* 7. Right Leg View */}
+        {viewMode === "right-leg" && (gender === "male" ? MALE_RIGHT_LEG_PARTS : FEMALE_RIGHT_LEG_PARTS).map((part) => (
+          <BodyPart
+            key={part.name}
+            position={part.position}
+            args={part.args as [number, number, number] | [number, number, number, number]}
+            name={part.name}
+            type={part.type}
+            rotation={part.rotation}
+            onSelect={onSelectPart}
+            selectedPart={selectedPart}
+          />
+        ))}
+
       </group>
     </group>
   );
