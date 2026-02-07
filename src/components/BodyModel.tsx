@@ -194,7 +194,7 @@ export const FEMALE_HEAD_PARTS: BodyPartConfig[] = [
 export const MALE_LEFT_ARM_PARTS: BodyPartConfig[] = [
   // 1. Upper Arm (Shoulder to Elbow)
   { name: "Deltoid (Shoulder Muscle)", type: "sphere", position: [0.02, 1.6, 0.2], args: [0.08, 16, 16] },
-  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [-0.1, 0.8, 0.1], args: [0.07, 16, 16] },
+  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [-0.1, 0.8, 0.1], args: [0.08, 16, 16] },
   { name: "Triceps Brachii (Back Arm)", type: "sphere", position: [0.3, 0.9, 0], args: [0.07, 16, 16] },
   { name: "Axilla (Armpit)", type: "sphere", position: [0.2, 1.3, 0], args: [0.06, 16, 16] },
   
@@ -211,7 +211,7 @@ export const MALE_LEFT_ARM_PARTS: BodyPartConfig[] = [
   { name: "Dorsal Carpal (Wrist Back)", type: "sphere", position: [0.3, -0.5, -0.1], args: [0.05, 16, 16] },
   
   // 4. Hand & Fingers
-  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [-0.2, -0.8, 0.3], args: [0.05, 16, 16] },
+  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [-0.1, -0.8, 0.1], args: [0.05, 16, 16] },
   { name: "Metacarpals (Back of Hand)", type: "sphere", position: [0.2, -0.9, -0.1], args: [0.05, 16, 16] },
   { name: "Palmar Region (Palm Center)", type: "sphere", position: [0.1, -0.8, -0.2], args: [0.05, 16, 16] },
   { name: "Phalanges (Fingers)", type: "sphere", position: [-0.1, -1.3, -0.1], args: [0.05, 16, 16] },
@@ -219,28 +219,26 @@ export const MALE_LEFT_ARM_PARTS: BodyPartConfig[] = [
 
 export const FEMALE_LEFT_ARM_PARTS: BodyPartConfig[] = [
   // 1. Upper Arm (Shoulder to Elbow)
-  { name: "Deltoid (Shoulder Muscle)", type: "sphere", position: [0.02, 1.6, 0.2], args: [0.07, 16, 16] },
-  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [-0.1, 0.8, 0.1], args: [0.06, 16, 16] },
-  { name: "Triceps Brachii (Back Arm)", type: "sphere", position: [0.3, 0.9, 0], args: [0.06, 16, 16] },
-  { name: "Axilla (Armpit)", type: "sphere", position: [0.2, 1.3, 0], args: [0.05, 16, 16] },
+  { name: "Deltoid (Shoulder Muscle)", type: "sphere", position: [0.02, 1.4, 0.01], args: [0.07, 16, 16] },
+  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [-0.1, 1.0, 0.0], args: [0.06, 16, 16] },
+  { name: "Triceps Brachii (Back Arm)", type: "sphere", position: [0.1, 1.0, -0.3], args: [0.06, 16, 16] },
+  { name: "Axilla (Armpit)", type: "sphere", position: [-0.2, 1.3, -0.1], args: [0.05, 16, 16] },
   
   // 2. Elbow Region
   { name: "Lateral Epicondyle (Outer Elbow)", type: "sphere", position: [-0.1, 0.4, -0.1], args: [0.05, 16, 16] },
-  { name: "Medial Epicondyle (Inner Elbow)", type: "sphere", position: [0.3, 0.5, -0.2], args: [0.05, 16, 16] },
-  { name: "Olecranon (Elbow Tip)", type: "sphere", position: [0.3, 0.5, -0.1], args: [0.05, 16, 16] },
-  { name: "Cubital Fossa (Inner Fold)", type: "sphere", position: [0.2, 0.4, 0], args: [0.05, 16, 16] },
+  { name: "Cubital Fossa (Inner Fold)", type: "sphere", position: [0.2, 0.4, -0.1], args: [0.05, 16, 16] },
   
   // 3. Forearm & Wrist
-  { name: "Volar Forearm (Inner Forearm)", type: "sphere", position: [-0.1, -0.1, -0.1], args: [0.05, 16, 16] },
-  { name: "Dorsal Forearm (Outer Forearm)", type: "sphere", position: [0.3, -0.1, -0.2], args: [0.05, 16, 16] },
-  { name: "Carpal Region (Wrist Front)", type: "sphere", position: [-0.1, -0.5, -0.1], args: [0.05, 16, 16] },
+  { name: "Volar Forearm (Inner Forearm)", type: "sphere", position: [-0.04, -0.1, -0.1], args: [0.05, 16, 16] },
+  { name: "Dorsal Forearm (Outer Forearm)", type: "sphere", position: [0.3, -0.1, -0.1], args: [0.05, 16, 16] },
+  { name: "Carpal Region (Wrist Front)", type: "sphere", position: [0.1, -0.5, -0.1], args: [0.05, 16, 16] },
   { name: "Dorsal Carpal (Wrist Back)", type: "sphere", position: [0.3, -0.5, -0.1], args: [0.05, 16, 16] },
   
   // 4. Hand & Fingers
-  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [-0.2, -0.8, 0.3], args: [0.05, 16, 16] },
-  { name: "Metacarpals (Back of Hand)", type: "sphere", position: [0.2, -0.9, -0.1], args: [0.05, 16, 16] },
-  { name: "Palmar Region (Palm Center)", type: "sphere", position: [0.1, -0.8, -0.2], args: [0.05, 16, 16] },
-  { name: "Phalanges (Fingers)", type: "sphere", position: [-0.1, -1.3, -0.1], args: [0.05, 16, 16] },
+  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [0.2, -1.0, 0.3], args: [0.05, 16, 16] },
+  { name: "Metacarpals (Back of Hand)", type: "sphere", position: [0.2, -1.0, -0.1], args: [0.05, 16, 16] },
+  { name: "Palmar Region (Palm Center)", type: "sphere", position: [0.1, -1.0, 0.0], args: [0.05, 16, 16] },
+  { name: "Phalanges (Fingers)", type: "sphere", position: [0.1,-1.3, -0.02], args: [0.05, 16, 16] },
 ];
 
 // ==========================================
@@ -249,54 +247,51 @@ export const FEMALE_LEFT_ARM_PARTS: BodyPartConfig[] = [
 
 export const MALE_RIGHT_ARM_PARTS: BodyPartConfig[] = [
   // 1. Upper Arm (Shoulder to Elbow)
-  { name: "Deltoid (Shoulder Muscle)", type: "sphere", position: [-0.4, 0.8, 0.2], args: [0.08, 16, 16] },
-  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [-0.5, 0.6, 0.4], args: [0.07, 16, 16] },
-  { name: "Triceps Brachii (Back Arm)", type: "sphere", position: [-0.5, 0.6, -0.2], args: [0.07, 16, 16] },
-  { name: "Axilla (Armpit)", type: "sphere", position: [-0.3, 0.9, 0], args: [0.06, 16, 16] },
+  { name: "Deltoid (Shoulder Muscle)", type: "sphere", position: [-0.2, 1.3, -0.1], args: [0.05, 16, 16] },
+  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [-0.1,1.0, 0.0], args: [0.05, 16, 16] },
+  { name: "Triceps Brachii (Back Arm)", type: "sphere", position: [-0.2,1.0, -0.4], args: [0.07, 16, 16] },
+  { name: "Axilla (Armpit)", type: "sphere", position: [0.3, 1.3, -0.2], args: [0.06, 16, 16] },
   
   // 2. Elbow Region
-  { name: "Lateral Epicondyle (Outer Elbow)", type: "sphere", position: [-0.6, 0.2, 0.1], args: [0.05, 16, 16] },
-  { name: "Medial Epicondyle (Inner Elbow)", type: "sphere", position: [-0.6, 0.2, -0.1], args: [0.05, 16, 16] },
-  { name: "Olecranon (Elbow Tip)", type: "sphere", position: [-0.6, 0.1, -0.2], args: [0.05, 16, 16] },
-  { name: "Cubital Fossa (Inner Fold)", type: "sphere", position: [-0.6, 0.3, 0], args: [0.05, 16, 16] },
+  { name: "Lateral Epicondyle (Outer Elbow)", type: "sphere", position: [-0.2, 0.7, -0.3], args: [0.05, 16, 16] },
+  { name: "Medial Epicondyle (Inner Elbow)", type: "sphere", position: [-0.2, 0.7, -0.1], args: [0.05, 16, 16] },
+  { name: "Cubital Fossa (Inner Fold)", type: "sphere", position: [0.1, 0.5, -0.05], args: [0.05, 16, 16] },
   
   // 3. Forearm & Wrist
-  { name: "Volar Forearm (Inner Forearm)", type: "sphere", position: [-0.8, -0.1, 0.2], args: [0.06, 16, 16] },
-  { name: "Dorsal Forearm (Outer Forearm)", type: "sphere", position: [-0.8, -0.1, -0.2], args: [0.06, 16, 16] },
-  { name: "Carpal Region (Wrist Front)", type: "sphere", position: [-1.0, -0.4, 0.1], args: [0.05, 16, 16] },
-  { name: "Dorsal Carpal (Wrist Back)", type: "sphere", position: [-1.0, -0.4, -0.1], args: [0.05, 16, 16] },
+  { name: "Volar Forearm (Inner Forearm)", type: "sphere", position: [-0.1, -0.3, -0.0], args: [0.07, 16, 16] },
+  { name: "Dorsal Forearm (Outer Forearm)", type: "sphere", position: [-0.3, -0.1, -0.1], args: [0.06, 16, 16] },
+  { name: "Carpal Region (Wrist Front)", type: "sphere", position: [-0.1, -0.5, -0.0], args: [0.05, 16, 16] },
+  { name: "Dorsal Carpal (Wrist Back)", type: "sphere", position: [-0.3, -0.5, -0.0], args: [0.05, 16, 16] },
   
   // 4. Hand & Fingers
-  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [-1.1, -0.6, 0.3], args: [0.05, 16, 16] },
-  { name: "Metacarpals (Back of Hand)", type: "sphere", position: [-1.2, -0.7, -0.1], args: [0.05, 16, 16] },
-  { name: "Palmar Region (Palm Center)", type: "sphere", position: [-1.2, -0.7, 0.1], args: [0.05, 16, 16] },
-  { name: "Phalanges (Fingers)", type: "sphere", position: [-1.3, -0.8, 0], args: [0.05, 16, 16] },
+  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [-0.1, -0.7, 0.3], args: [0.05, 16, 16] },
+  { name: "Metacarpals (Back of Hand)", type: "sphere", position: [-0.3, -0.8, 0.1], args: [0.05, 16, 16] },
+  { name: "Palmar Region (Palm Center)", type: "sphere", position: [-0.1, -0.8, 0.2], args: [0.05, 16, 16] },
+  { name: "Phalanges (Fingers)", type: "sphere", position: [-0.1, -1.2, 0.1], args: [0.05, 16, 16] },
 ];
 
 export const FEMALE_RIGHT_ARM_PARTS: BodyPartConfig[] = [
   // 1. Upper Arm (Shoulder to Elbow)
-  { name: "Deltoid (Shoulder Muscle)", type: "sphere", position: [-0.4, 0.8, 0.2], args: [0.07, 16, 16] },
-  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [-0.5, 0.6, 0.4], args: [0.06, 16, 16] },
-  { name: "Triceps Brachii (Back Arm)", type: "sphere", position: [-0.5, 0.6, -0.2], args: [0.06, 16, 16] },
-  { name: "Axilla (Armpit)", type: "sphere", position: [-0.3, 0.9, 0], args: [0.05, 16, 16] },
+  { name: "Deltoid (Shoulder Muscle)", type: "sphere", position: [-0.1, 1.3, -0.2], args: [0.07, 16, 16] },
+  { name: "Biceps Brachii (Front Arm)", type: "sphere", position: [0.1, 0.8, 0.1], args: [0.06, 16, 16] },
+  { name: "Triceps Brachii (Back Arm)", type: "sphere", position: [0.2, 0.9, -0.1], args: [0.06, 16, 16] },
+  { name: "Axilla (Armpit)", type: "sphere", position: [0.2, 1.3, 0.2], args: [0.05, 16, 16] },
   
   // 2. Elbow Region
-  { name: "Lateral Epicondyle (Outer Elbow)", type: "sphere", position: [-0.6, 0.2, 0.1], args: [0.05, 16, 16] },
-  { name: "Medial Epicondyle (Inner Elbow)", type: "sphere", position: [-0.6, 0.2, -0.1], args: [0.05, 16, 16] },
-  { name: "Olecranon (Elbow Tip)", type: "sphere", position: [-0.6, 0.1, -0.2], args: [0.05, 16, 16] },
-  { name: "Cubital Fossa (Inner Fold)", type: "sphere", position: [-0.6, 0.3, 0], args: [0.05, 16, 16] },
-  
+  { name: "Lateral Epicondyle (Outer Elbow)", type: "sphere", position: [-0.1, 0.4, -0.2], args: [0.05, 16, 16] },
+  { name: "Medial Epicondyle (Inner Elbow)", type: "sphere", position: [-0.1, 0.4, 0.01], args: [0.05, 16, 16] },
+
   // 3. Forearm & Wrist
-  { name: "Volar Forearm (Inner Forearm)", type: "sphere", position: [-0.8, -0.1, 0.2], args: [0.05, 16, 16] },
-  { name: "Dorsal Forearm (Outer Forearm)", type: "sphere", position: [-0.8, -0.1, -0.2], args: [0.05, 16, 16] },
-  { name: "Carpal Region (Wrist Front)", type: "sphere", position: [-1.0, -0.4, 0.1], args: [0.05, 16, 16] },
-  { name: "Dorsal Carpal (Wrist Back)", type: "sphere", position: [-1.0, -0.4, -0.1], args: [0.05, 16, 16] },
+  { name: "Volar Forearm (Inner Forearm)", type: "sphere", position: [0.1, -0.1, 0.1], args: [0.05, 16, 16] },
+  { name: "Dorsal Forearm (Outer Forearm)", type: "sphere", position: [-0.1, -0.1, -0.2], args: [0.05, 16, 16] },
+  { name: "Carpal Region (Wrist Front)", type: "sphere", position: [0.0, -0.6, -0.1], args: [0.05, 16, 16] },
+  { name: "Dorsal Carpal (Wrist Back)", type: "sphere", position: [-0.1, -0.7, -0.1], args: [0.05, 16, 16] },
   
   // 4. Hand & Fingers
-  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [-1.1, -0.6, 0.3], args: [0.05, 16, 16] },
-  { name: "Metacarpals (Back of Hand)", type: "sphere", position: [-1.2, -0.7, -0.1], args: [0.05, 16, 16] },
-  { name: "Palmar Region (Palm Center)", type: "sphere", position: [-1.2, -0.7, 0.1], args: [0.05, 16, 16] },
-  { name: "Phalanges (Fingers)", type: "sphere", position: [-1.3, -0.8, 0], args: [0.05, 16, 16] },
+  { name: "Thenar Eminence (Thumb Base)", type: "sphere", position: [-0.1, -0.8, 0.1], args: [0.05, 16, 16] },
+  { name: "Metacarpals (Back of Hand)", type: "sphere", position: [-0.2, -1.0, -0.01], args: [0.05, 16, 16] },
+  { name: "Palmar Region (Palm Center)", type: "sphere", position: [0.01, -1.0, -0.01], args: [0.05, 16, 16] },
+  { name: "Phalanges (Fingers)", type: "sphere", position: [-0.1, -1.3, -0.1], args: [0.05, 16, 16] },
 ];
 
 // ==========================================
