@@ -84,3 +84,10 @@ You can manually fine-tune the position of the interactive pins on the 3D model.
 **© 2025 AnatoAI. All Rights Reserved.**
 
 This project and its source code are proprietary. Unauthorized copying, modification, distribution, or use of this software, in whole or in part, is strictly prohibited without explicit permission from the copyright holders.
+
+## Development Team
+
+- Sanjaya Samudra
+- Praveen Tharuka
+- Yasas Chamod
+- Sithum Dineth
