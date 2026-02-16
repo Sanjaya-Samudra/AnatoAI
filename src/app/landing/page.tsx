@@ -274,7 +274,7 @@ export default function LandingPage() {
                 <span className="bg-blue-500/10 text-blue-400 py-1 px-3 rounded-lg text-sm uppercase tracking-wider">Team</span>
                 JthonX
               </h4>
-              <ul className="space-y-3 text-sm font-medium text-slate-300 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12">
+              <ul className="text-sm font-medium text-slate-300 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 items-center">
                 <li className="flex items-center gap-2 group whitespace-nowrap">
                    <div className="w-2 h-2 rounded-full bg-blue-600 group-hover:bg-blue-400 transition-colors shrink-0"></div>
                    <span className="group-hover:text-white transition-colors">Sanjaya Samudra</span>
