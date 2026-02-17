@@ -64,21 +64,6 @@ Before you begin, ensure you have the following installed:
 -   **Scroll**: Zoom in/out (limited range).
 -   **Click Pin**: Select a body part to open the AI analysis panel.
 
-## 🔧 Customization
-
-### Adjusting Pin Positions
-You can manually fine-tune the position of the interactive pins on the 3D model.
-
-1.  Open `src/components/BodyModel.tsx`.
-2.  Locate the `FULL_BODY_PARTS` configuration array.
-3.  Adjust the `pinOffset` values `[x, y, z]` for any body part.
-    *   Increasing values generally moves the pin further outward from the body center.
-
-```typescript
-// Example: Moving the Head pin further forward (z-axis)
-{ name: "Head", ..., pinOffset: [0, 0.15, 0.35] },
-```
-
 ## 📄 License
 
 **© 2025 AnatoAI. All Rights Reserved.**
