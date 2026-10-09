@@ -20,7 +20,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({ onSelect, active
   ];
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:bottom-auto md:left-6 md:top-[58%] md:translate-x-0 md:-translate-y-1/2 z-40 pointer-events-auto">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 md:bottom-auto md:left-6 md:top-[calc(58%_-_15px)] md:translate-x-0 md:-translate-y-1/2 z-40 pointer-events-auto">
       <div className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md p-1.5 rounded-2xl shadow-xl border border-white/20 dark:border-slate-800 flex flex-row md:flex-col gap-1 transition-all cubic-bezier(0.4, 0, 0.2, 1) duration-300 w-auto md:w-16 md:hover:w-60 md:focus-within:w-60 overflow-hidden group">
         {navItems.map((item) => (
           <button
