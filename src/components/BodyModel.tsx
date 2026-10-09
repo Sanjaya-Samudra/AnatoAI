@@ -271,10 +271,11 @@ export const BodyModel: React.FC<BodyModelProps> = ({
 
   const stamp = (point: THREE.Vector3, event: ThreeEvent<PointerEvent>) => {
     if (markDotsRef.current.length + 5 > MAX_MARK_DOTS) return;
-    const front = event.ray.direction.clone().multiplyScalar(-0.025);
-    const right = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 0).multiplyScalar(0.023);
-    const up = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 1).multiplyScalar(0.023);
-    const center = point.clone().add(front);
+    // Sink each sphere's center just below the surface so only its outer half shows.
+    const inward = event.ray.direction.clone().multiplyScalar(0.003);
+    const right = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 0).multiplyScalar(0.016);
+    const up = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 1).multiplyScalar(0.016);
+    const center = point.clone().add(inward);
     markDotsRef.current.push(center, center.clone().add(right), center.clone().sub(right), center.clone().add(up), center.clone().sub(up));
   };
 
@@ -328,16 +329,22 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     }
   };
 
+  const selectOnClick = (event: ThreeEvent<MouseEvent>) => {
+    if (viewMode !== 'full' || marking || event.delta >= 7) return;
+    event.stopPropagation();
+    onSelectPart(bodyRegionAt(event.point, surfaceBounds));
+  };
+
   return (
     <group position={[0, 0, 0]}>
       {/* The Real 3D Model */}
-      <group scale={modelScale} position={modelPosition} onPointerDown={startMark} onPointerMove={continueMark} onPointerUp={finishMark}>
+      <group scale={modelScale} position={modelPosition} onPointerDown={startMark} onPointerMove={continueMark} onPointerUp={finishMark} onClick={selectOnClick}>
         <primitive object={scene} />
       </group>
 
       {viewMode === 'full' && <instancedMesh ref={markMesh} args={[undefined, undefined, MAX_MARK_DOTS]} raycast={() => undefined} frustumCulled={false}>
-        <sphereGeometry args={[0.013, 6, 6]} />
-        <meshBasicMaterial color="#2563eb" transparent opacity={0.92} depthWrite={false} />
+        <sphereGeometry args={[0.009, 8, 8]} />
+        <meshBasicMaterial color="#2563eb" transparent opacity={0.94} depthTest depthWrite={false} />
       </instancedMesh>}
 
       {/* Annotations Group */}

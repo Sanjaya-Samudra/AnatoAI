@@ -71,14 +71,14 @@ function Controls({ viewMode, gender, marking }: ControlsProps) {
     <OrbitControls 
       ref={controlsRef}
       makeDefault 
-      enabled={viewMode !== 'full' || !marking}
+      enabled
       minDistance={minDistance} 
       maxDistance={maxDistance}
       minPolarAngle={0}
       maxPolarAngle={Math.PI / 2} // Restrict going below the floor
       enablePan={true}
       enableZoom={true}
-      enableRotate={true}
+      enableRotate={viewMode !== 'full' || !marking}
       mouseButtons={{
         LEFT: THREE.MOUSE.ROTATE,
         MIDDLE: THREE.MOUSE.DOLLY,
@@ -90,7 +90,7 @@ function Controls({ viewMode, gender, marking }: ControlsProps) {
 
 export default function Scene({ onSelectPart, onAnalyzeArea, selectedPart, gender, viewMode }: SceneProps) {
   const [quality, setQuality] = useState(1.5);
-  const [marking, setMarking] = useState(true);
+  const [marking, setMarking] = useState(false);
   const [selectedArea, setSelectedArea] = useState<{ region: FullBodyRegion; hasArea: boolean } | null>(null);
   const [clearVersion, setClearVersion] = useState(0);
   const [modelReady, setModelReady] = useState(false);
@@ -117,11 +117,8 @@ export default function Scene({ onSelectPart, onAnalyzeArea, selectedPart, gende
       </Canvas>
       <ModelLoading />
       {viewMode === 'full' && modelReady && !selectedPart && <div className="absolute bottom-28 left-1/2 z-10 w-[min(92vw,400px)] -translate-x-1/2 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-xl backdrop-blur dark:border-slate-700 dark:bg-slate-900/95 md:bottom-auto md:left-auto md:right-6 md:top-28 md:w-[330px] md:translate-x-0" aria-label="Full body area selection">
-        <div className="flex gap-2">
-          <button type="button" aria-pressed={marking} onClick={() => setMarking(true)} className={`flex-1 rounded-xl px-3 py-2 text-sm font-semibold ${marking ? 'bg-blue-600 text-white' : 'text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-slate-800'}`}>Draw pain area</button>
-          <button type="button" aria-pressed={!marking} onClick={() => setMarking(false)} className={`flex-1 rounded-xl px-3 py-2 text-sm font-semibold ${!marking ? 'bg-blue-600 text-white' : 'text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-slate-800'}`}>Rotate model</button>
-        </div>
-        <p className="px-2 pt-2 text-center text-xs text-slate-600 dark:text-slate-300" role="status">{selectedArea ? `${selectedArea.region} selected${selectedArea.hasArea ? '' : ' - drag to mark a larger area'}` : marking ? 'Drag over the body to mark where it hurts.' : 'Drag to rotate, then choose Draw pain area.'}</p>
+        <button type="button" aria-pressed={marking} onClick={() => setMarking(value => !value)} className={`w-full rounded-xl px-3 py-2 text-sm font-semibold ${marking ? 'bg-blue-600 text-white' : 'text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-slate-800'}`}>{marking ? 'Done drawing' : 'Draw pain area'}</button>
+        <p className="px-2 pt-2 text-center text-xs text-slate-600 dark:text-slate-300" role="status">{selectedArea ? `${selectedArea.region} selected${selectedArea.hasArea ? '' : ' - drag to mark a larger area'}` : marking ? 'Drag over the body to mark where it hurts. Right-drag to move the view.' : 'Click a region, left-drag to rotate, or right-drag to move the view.'}</p>
         {selectedArea && <div className="mt-2 flex gap-2">
           <button type="button" onClick={() => { setSelectedArea(null); setClearVersion(value => value + 1); }} className="flex-1 rounded-xl border border-blue-200 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 dark:border-slate-700 dark:text-blue-300 dark:hover:bg-slate-800">Cancel selection</button>
           <button type="button" disabled={!selectedArea.hasArea} onClick={() => onAnalyzeArea(selectedArea.region)} className="flex-1 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40">Analyze area</button>

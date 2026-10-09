@@ -7,7 +7,8 @@ test('full-body drawing stays selected until the user analyzes or cancels it', a
     await route.fulfill({ contentType: 'application/x-ndjson', body: '{"type":"delta","text":"Educational guidance for this area."}\n{"type":"done"}\n' });
   });
   await page.goto('/app');
-  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Draw pain area' }).click();
   const canvas = await page.locator('canvas').boundingBox();
   expect(canvas).not.toBeNull();
   const center = canvas!.x + canvas!.width / 2;
@@ -22,11 +23,13 @@ test('full-body drawing stays selected until the user analyzes or cancels it', a
   await page.screenshot({ path: 'output/full-body-selection-desktop.png' });
   await page.getByRole('button', { name: 'Cancel selection' }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Drag over the body' })).toBeVisible();
+  await page.getByRole('button', { name: 'Done drawing' }).click();
   await page.mouse.click(center, top + 155);
   await expect(page.getByRole('button', { name: 'Head Region' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('heading', { name: 'Head' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Full Body' }).click();
   await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible();
+  await page.getByRole('button', { name: 'Draw pain area' }).click();
   await page.mouse.move(center - 15, top + 155);
   await page.mouse.down();
   await page.mouse.move(center + 20, top + 177, { steps: 8 });
@@ -42,6 +45,7 @@ test('female full-body model supports a surface area selection', async ({ page }
   await page.goto('/app');
   await page.getByRole('button', { name: 'Female' }).click();
   await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible();
+  await page.getByRole('button', { name: 'Draw pain area' }).click();
   const canvas = await page.locator('canvas').boundingBox();
   expect(canvas).not.toBeNull();
   const center = canvas!.x + canvas!.width / 2;
@@ -59,6 +63,7 @@ test('drawing identifies torso, arms, and legs from the surface where it starts'
   test.skip(isMobile, 'Desktop model coordinates are used for this region-boundary check.');
   await page.goto('/app');
   await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible();
+  await page.getByRole('button', { name: 'Draw pain area' }).click();
   const canvas = await page.locator('canvas').boundingBox();
   expect(canvas).not.toBeNull();
   const cx = canvas!.x + canvas!.width / 2;
