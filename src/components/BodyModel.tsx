@@ -301,22 +301,36 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     const start = strokeStartScreen.current;
     if (start && Math.hypot(event.nativeEvent.clientX - start.x, event.nativeEvent.clientY - start.y) >= 7) strokeDragged.current = true;
     if (!strokeDragged.current) return;
+    const region = strokeRegion.current;
+    if (!region || bodyRegionAt(event.point, surfaceBounds) !== region) {
+      previousPoint.current = null;
+      return;
+    }
     const last = previousPoint.current;
-    if (!last) return;
+    if (!last) {
+      stamp(event.point, event);
+      previousPoint.current = event.point.clone();
+      setMarkDots([...markDotsRef.current]);
+      if (!areaReady.current && markDotsRef.current.length >= 20) { areaReady.current = true; onAreaChange(region, true); }
+      return;
+    }
     const distance = last.distanceTo(event.point);
     if (distance < 0.028) return;
     if (distance > 0.35) {
       stamp(event.point, event);
       setMarkDots([...markDotsRef.current]);
       previousPoint.current = event.point.clone();
-      if (!areaReady.current && strokeRegion.current) { areaReady.current = true; onAreaChange(strokeRegion.current, true); }
+      if (!areaReady.current && markDotsRef.current.length >= 20) { areaReady.current = true; onAreaChange(region, true); }
       return;
     }
     const steps = Math.min(12, Math.floor(distance / 0.028));
-    for (let step = 1; step <= steps; step++) stamp(last.clone().lerp(event.point, step / steps), event);
+    for (let step = 1; step <= steps; step++) {
+      const point = last.clone().lerp(event.point, step / steps);
+      if (bodyRegionAt(point, surfaceBounds) === region) stamp(point, event);
+    }
     setMarkDots([...markDotsRef.current]);
     previousPoint.current = event.point.clone();
-    if (!areaReady.current && markDotsRef.current.length >= 20 && strokeRegion.current) { areaReady.current = true; onAreaChange(strokeRegion.current, true); }
+    if (!areaReady.current && markDotsRef.current.length >= 20) { areaReady.current = true; onAreaChange(region, true); }
   };
 
   const finishMark = () => {
@@ -324,7 +338,7 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     strokeActive.current = false;
     if (!strokeDragged.current && strokeRegion.current) {
       onSelectPart(strokeRegion.current);
-    } else if (strokeRegion.current && markDotsRef.current.length > 5) {
+    } else if (strokeRegion.current && areaReady.current) {
       onAreaChange(strokeRegion.current, true);
     }
   };

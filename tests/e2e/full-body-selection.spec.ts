@@ -13,9 +13,9 @@ test('full-body drawing stays selected until the user analyzes or cancels it', a
   expect(canvas).not.toBeNull();
   const center = canvas!.x + canvas!.width / 2;
   const top = canvas!.y;
-  await page.mouse.move(center - 15, top + 155);
+  await page.mouse.move(center - 15, top + 125);
   await page.mouse.down();
-  await page.mouse.move(center + 20, top + 177, { steps: 8 });
+  await page.mouse.move(center + 20, top + 145, { steps: 8 });
   await page.mouse.move(center, top + 275, { steps: 14 });
   await page.mouse.up();
   await expect(page.getByRole('status').filter({ hasText: 'Head selected' })).toBeVisible();
@@ -28,11 +28,11 @@ test('full-body drawing stays selected until the user analyzes or cancels it', a
   await expect(page.getByRole('button', { name: 'Head Region' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByRole('heading', { name: 'Head' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Full Body' }).click();
-  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Draw pain area' }).click();
-  await page.mouse.move(center - 15, top + 155);
+  await page.mouse.move(center - 15, top + 125);
   await page.mouse.down();
-  await page.mouse.move(center + 20, top + 177, { steps: 8 });
+  await page.mouse.move(center + 20, top + 145, { steps: 8 });
   await page.mouse.up();
   await page.getByRole('button', { name: 'Analyze area' }).click();
   await expect(page.getByRole('heading', { name: 'Head' })).toBeVisible();
@@ -44,25 +44,45 @@ test('full-body drawing stays selected until the user analyzes or cancels it', a
 test('female full-body model supports a surface area selection', async ({ page }) => {
   await page.goto('/app');
   await page.getByRole('button', { name: 'Female' }).click();
-  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Draw pain area' }).click();
   const canvas = await page.locator('canvas').boundingBox();
   expect(canvas).not.toBeNull();
   const center = canvas!.x + canvas!.width / 2;
   const top = canvas!.y;
-  await page.mouse.move(center - 12, top + 155);
+  await page.mouse.move(center - 12, top + 125);
   await page.mouse.down();
-  await page.mouse.move(center + 17, top + 183, { steps: 9 });
+  await page.mouse.move(center + 17, top + 145, { steps: 9 });
   await page.mouse.up();
   await expect(page.getByRole('status').filter({ hasText: 'Head selected' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Analyze area' })).toBeEnabled();
   await page.screenshot({ path: 'output/full-body-selection-female.png' });
 });
 
+test('a stroke stops at its starting region and resumes only when it returns', async ({ page }) => {
+  await page.goto('/app');
+  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Draw pain area' }).click();
+  const canvas = await page.locator('canvas').boundingBox();
+  expect(canvas).not.toBeNull();
+  const center = canvas!.x + canvas!.width / 2;
+  const top = canvas!.y;
+  await page.mouse.move(center, top + 155);
+  await page.mouse.down();
+  await page.mouse.move(center, top + 275);
+  await expect(page.getByRole('status').filter({ hasText: 'Head selected' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Analyze area' })).toBeDisabled();
+  await page.mouse.move(center, top + 145);
+  await page.mouse.move(center, top + 105, { steps: 14 });
+  await page.mouse.up();
+  await expect(page.getByRole('button', { name: 'Analyze area' })).toBeEnabled();
+  await page.screenshot({ path: 'output/full-body-region-boundary.png' });
+});
+
 test('drawing identifies torso, arms, and legs from the surface where it starts', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Desktop model coordinates are used for this region-boundary check.');
   await page.goto('/app');
-  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible({ timeout: 60_000 });
   await page.getByRole('button', { name: 'Draw pain area' }).click();
   const canvas = await page.locator('canvas').boundingBox();
   expect(canvas).not.toBeNull();

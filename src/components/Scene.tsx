@@ -99,23 +99,22 @@ export default function Scene({ onSelectPart, onAnalyzeArea, selectedPart, gende
   return (
     <div className="relative w-full h-full bg-transparent">
       <Canvas dpr={quality} frameloop={visible ? "always" : "never"} camera={{ position: [0, 1, 5], fov: 45 }} style={{ touchAction: viewMode === 'full' && marking ? 'none' : 'auto' }}>
+        <PerformanceMonitor onDecline={() => setQuality(1)} onIncline={() => setQuality(1.5)} flipflops={2} onFallback={() => setQuality(1)} />
+        <ambientLight intensity={0.6} />
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.2} />
+        <pointLight position={[-10, -10, -10]} intensity={0.4} color="#3b82f6" />
+        <directionalLight position={[5, 5, 5]} intensity={0.8} />
         <Suspense fallback={null}>
-          <PerformanceMonitor onDecline={() => setQuality(1)} onIncline={() => setQuality(1.5)} flipflops={2} onFallback={() => setQuality(1)} />
-          <ambientLight intensity={0.6} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.2} />
-          <pointLight position={[-10, -10, -10]} intensity={0.4} color="#3b82f6" />
-          <directionalLight position={[5, 5, 5]} intensity={0.8} />
-          
           <BodyModel key={`${gender}-${viewMode}`} onSelectPart={onSelectPart} selectedPart={selectedPart} gender={gender} viewMode={viewMode} marking={marking} clearSignal={clearVersion} onAreaChange={(region, hasArea) => setSelectedArea({ region, hasArea })} onModelReady={handleModelReady} />
-          
-          {/* Shadows adjusted for lighter background */}
-          <ContactShadows position={[0, -1.6, 0]} resolution={quality === 1 ? 512 : 1024} scale={10} blur={1.5} opacity={0.3} far={10} color="#1e3a8a" />
-          <Environment preset="sunset" />
-          
-          <Controls key={`${viewMode}-${gender}`} viewMode={viewMode} gender={gender} marking={marking} />
         </Suspense>
+        {/* Shadows adjusted for lighter background */}
+        <ContactShadows position={[0, -1.6, 0]} resolution={quality === 1 ? 512 : 1024} scale={10} blur={1.5} opacity={0.3} far={10} color="#1e3a8a" />
+        <Suspense fallback={null}>
+          <Environment preset="sunset" />
+        </Suspense>
+        <Controls key={`${viewMode}-${gender}`} viewMode={viewMode} gender={gender} marking={marking} />
       </Canvas>
-      <ModelLoading />
+      <ModelLoading ready={modelReady} />
       {viewMode === 'full' && modelReady && !selectedPart && <div className="absolute bottom-28 left-1/2 z-10 w-[min(92vw,400px)] -translate-x-1/2 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-xl backdrop-blur dark:border-slate-700 dark:bg-slate-900/95 md:bottom-auto md:left-auto md:right-6 md:top-28 md:w-[330px] md:translate-x-0" aria-label="Full body area selection">
         <button type="button" aria-pressed={marking} onClick={() => setMarking(value => !value)} className={`w-full rounded-xl px-3 py-2 text-sm font-semibold ${marking ? 'bg-blue-600 text-white' : 'text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-slate-800'}`}>{marking ? 'Done drawing' : 'Draw pain area'}</button>
         <p className="px-2 pt-2 text-center text-xs text-slate-600 dark:text-slate-300" role="status">{selectedArea ? `${selectedArea.region} selected${selectedArea.hasArea ? '' : ' - drag to mark a larger area'}` : marking ? 'Drag over the body to mark where it hurts. Right-drag to move the view.' : 'Click a region, left-drag to rotate, or right-drag to move the view.'}</p>
