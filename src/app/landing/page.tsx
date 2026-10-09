@@ -1,19 +1,21 @@
 "use client";
 
-import React, { useRef, useEffect, Suspense, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment } from "@react-three/drei";
-import { GlowModelRotator } from "@/components/GlowModelRotator";
-import { Activity, Brain, Heart, Stethoscope, ArrowRight, Github } from "lucide-react";
+import React, { useRef, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
+import SceneBoundary from "@/components/SceneBoundary";
+const LandingScene = dynamic(() => import("@/components/LandingScene"), { ssr: false });
+import { Activity, Brain, Heart, ArrowRight, Github } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 
+const textItems = ["Explore the human body", "Get answers powered by AI"];
+
 const AnimatedHeroText = () => {
   const [displayedText, setDisplayedText] = useState("Explore the human body");
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const textItems = ["Explore the human body", "Get answers powered by AI"];
   const currentIndex = useRef(0);
 
   useEffect(() => {
@@ -43,6 +45,7 @@ const AnimatedHeroText = () => {
 };
 
 export default function LandingPage() {
+  const router = useRouter();
   return (
     <>
       <style>{`
@@ -117,7 +120,7 @@ export default function LandingPage() {
           </nav>
 
           <button
-            onClick={() => window.location.href = "/app"}
+            onClick={() => router.push("/app")}
             className="group px-6 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white dark:text-white text-sm font-bold rounded-xl transition-all duration-300 shadow-lg hover:shadow-blue-500/25 flex items-center gap-2"
           >
             Launch App 
@@ -135,39 +138,7 @@ export default function LandingPage() {
           {/* Subtle dark gradient for depth in dark mode - removes patchy white */}
           <div className="absolute inset-0 bg-transparent dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 opacity-100 pointer-events-none" />
           
-          <Canvas
-            camera={{ position: [0, 0, 16], fov: 45 }}
-            gl={{ antialias: true, alpha: true }}
-          >
-            <Environment preset="studio" />
-            <ambientLight intensity={0.8} />
-            <directionalLight position={[5, 10, 5]} intensity={1.5} />
-            
-            <Suspense fallback={null}>
-              {/* Female Model - Left Corner - Counter Clockwise */}
-              <GlowModelRotator
-                modelPath="/models/female/GlowBodyFemale.glb"
-                position={[-10, -0.5, 0]}
-                scale={7}
-                direction="counter-clockwise"
-              />
-              
-              {/* Male Model - Right Corner - Clockwise */}
-              <GlowModelRotator
-                modelPath="/models/male/GlowBody.glb"
-                position={[10, -0.5, 0]}
-                scale={7}
-                direction="clockwise"
-              />
-            </Suspense>
-
-            <OrbitControls
-              autoRotate={false}
-              enableZoom={false}
-              enablePan={false}
-              enableRotate={false}
-            />
-          </Canvas>
+          <SceneBoundary><LandingScene /></SceneBoundary>
         </div>
 
         {/* Content Overlay */}
@@ -190,7 +161,7 @@ export default function LandingPage() {
 
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 pointer-events-auto">
             <button
-              onClick={() => window.location.href = "/app"}
+              onClick={() => router.push("/app")}
               className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 text-lg flex items-center gap-3 transform hover:-translate-y-1"
             >
               Start Exploring <Activity className="w-5 h-5" />

@@ -1,10 +1,12 @@
 "use client";
 
-import React, { Suspense, useRef, useEffect } from "react";
+import React, { Suspense, useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows } from "@react-three/drei";
+import { OrbitControls, Environment, ContactShadows, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import { BodyModel } from "./BodyModel";
+import ModelLoading from "./ModelLoading";
+import { usePageVisible } from "./usePageVisible";
 
 interface SceneProps {
   onSelectPart: (part: string) => void;
@@ -83,10 +85,13 @@ function Controls({ viewMode, gender }: ControlsProps) {
 }
 
 export default function Scene({ onSelectPart, selectedPart, gender, viewMode }: SceneProps) {
+  const [quality, setQuality] = useState(1.5);
+  const visible = usePageVisible();
   return (
-    <div className="w-full h-full bg-transparent">
-      <Canvas camera={{ position: [0, 1, 5], fov: 45 }}>
+    <div className="relative w-full h-full bg-transparent">
+      <Canvas dpr={quality} frameloop={visible ? "always" : "never"} camera={{ position: [0, 1, 5], fov: 45 }}>
         <Suspense fallback={null}>
+          <PerformanceMonitor onDecline={() => setQuality(1)} onIncline={() => setQuality(1.5)} flipflops={2} onFallback={() => setQuality(1)} />
           <ambientLight intensity={0.6} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1.2} />
           <pointLight position={[-10, -10, -10]} intensity={0.4} color="#3b82f6" />
@@ -95,12 +100,13 @@ export default function Scene({ onSelectPart, selectedPart, gender, viewMode }: 
           <BodyModel onSelectPart={onSelectPart} selectedPart={selectedPart} gender={gender} viewMode={viewMode} />
           
           {/* Shadows adjusted for lighter background */}
-          <ContactShadows position={[0, -1.6, 0]} resolution={1024} scale={10} blur={1.5} opacity={0.3} far={10} color="#1e3a8a" />
+          <ContactShadows position={[0, -1.6, 0]} resolution={quality === 1 ? 512 : 1024} scale={10} blur={1.5} opacity={0.3} far={10} color="#1e3a8a" />
           <Environment preset="sunset" />
           
           <Controls key={`${viewMode}-${gender}`} viewMode={viewMode} gender={gender} />
         </Suspense>
       </Canvas>
+      <ModelLoading />
     </div>
   );
 }
