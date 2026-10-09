@@ -357,6 +357,7 @@ export const PARTS_BY_GENDER: Record<BodyGender, Record<BodyView, BodyPartConfig
   male: { full: MALE_BODY_PARTS, head: MALE_HEAD_PARTS, torso: MALE_TORSO_PARTS, "left-hand": MALE_LEFT_ARM_PARTS, "right-hand": MALE_RIGHT_ARM_PARTS, "left-leg": MALE_LEFT_LEG_PARTS, "right-leg": MALE_RIGHT_LEG_PARTS },
   female: { full: FEMALE_BODY_PARTS, head: FEMALE_HEAD_PARTS, torso: FEMALE_TORSO_PARTS, "left-hand": FEMALE_LEFT_ARM_PARTS, "right-hand": FEMALE_RIGHT_ARM_PARTS, "left-leg": FEMALE_LEFT_LEG_PARTS, "right-leg": FEMALE_RIGHT_LEG_PARTS },
 };
-export function searchableParts(gender: BodyGender) {
-  return BODY_VIEWS.filter(view => view !== "full").flatMap(view => PARTS_BY_GENDER[gender][view].map(part => ({ name: part.name, view, region: VIEW_LABELS[view] })));
+export function searchableParts(gender: BodyGender, selectedView: BodyView = "full") {
+  const views = selectedView === "full" ? BODY_VIEWS.filter(view => view !== "full") : [selectedView];
+  return views.flatMap(view => PARTS_BY_GENDER[gender][view].map(part => ({ name: part.name, view, region: VIEW_LABELS[view] })));
 }

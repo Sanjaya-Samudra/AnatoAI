@@ -33,6 +33,7 @@ test('keyboard search, initial scroll, symptom details, export, and layout', asy
   const html = await fs.readFile((await download.path())!, 'utf8');
   expect(html).toContain('Left leg'); expect(html).toContain('5/10'); expect(html).toContain('AI-generated conversation notes');
   await page.getByRole('button', { name: 'Close chat' }).click();
+  await page.getByRole('button', { name: 'Right Leg' }).click();
   await search.fill('right knee'); await search.press('Enter');
   await expect(page.getByRole('note', { name: 'AI-generated medical information notice' })).toHaveCount(1);
   expect(requests.at(-1)?.viewMode).toBe('right-leg');
@@ -40,6 +41,22 @@ test('keyboard search, initial scroll, symptom details, export, and layout', asy
   await expect(page.getByLabel('Your symptom details')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Send message', exact: true })).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test('pain point search follows the selected body region', async ({ page }) => {
+  await page.goto('/app');
+  const search = page.getByRole('combobox', { name: 'Search pain points' });
+  await search.fill('knee');
+  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Left leg/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Right leg/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Left Leg' }).click();
+  await search.fill('knee');
+  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Left leg/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Right leg/ })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Right Leg' }).click();
+  await search.fill('knee');
+  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Right leg/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Left leg/ })).toHaveCount(0);
 });
 
 test('stop and retry recover a request without stale content', async ({ page }) => {

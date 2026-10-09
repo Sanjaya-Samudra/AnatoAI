@@ -95,7 +95,7 @@ export default function AppPage() {
 
       {/* Left Sidebar Navigation */}
       <div className={selectedPart ? "hidden md:block" : ""}><NavigationRail onSelect={handleSidebarClick} activeMode={viewMode} /></div>
-      <div className={`fixed left-4 right-4 top-20 z-40 md:left-28 md:top-28 ${selectedPart ? 'md:right-[500px]' : 'md:right-auto'}`}><BodyPartSearch gender={gender} onSelect={(name, view) => { setViewMode(view); setSelectedPart(name); }} /></div>
+      <div className={`fixed left-4 right-4 top-20 z-40 md:left-28 md:top-28 ${selectedPart ? 'md:right-[500px]' : 'md:right-auto'}`}><BodyPartSearch key={`${gender}-${viewMode}`} gender={gender} viewMode={viewMode} onSelect={(name, view) => { setViewMode(view); setSelectedPart(name); }} /></div>
 
       <div className={selectedPart ? "hidden md:block" : ""}><ThemeToggle aboveMobileNavigation /></div>
 

@@ -16,6 +16,9 @@ test('a pin produces an initial request with the correct side before asking ques
 });
 test('anatomical catalog preserves left and right selections independently', () => {
   assert.deepEqual(searchableParts('male').filter(p => p.name === 'Knee (Patellar)').map(p => p.view), ['left-leg', 'right-leg']);
+  assert.ok(searchableParts('male', 'left-leg').length > 0);
+  assert.ok(searchableParts('male', 'left-leg').every(p => p.view === 'left-leg'));
+  assert.ok(searchableParts('male', 'right-leg').every(p => p.view === 'right-leg'));
   assert.throws(() => validateChatRequest({ ...valid, viewMode: 'head' }), RequestError);
 });
 test('reject untrusted roles, invented points, oversized history and messages', () => {
