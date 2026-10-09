@@ -85,7 +85,7 @@ function ChatPanel({ selectedPart, onClose, gender, viewMode }: OverlayProps & {
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-1">
-            <button aria-label="Download consultation summary" title="Download a printable consultation summary" disabled={loading || !messages.some(message => message.content.trim())} onClick={() => downloadSummary(consultationSummary(selectedPart, viewMode, symptoms, messages, interrupted))} className="rounded-full p-2 text-blue-600 hover:bg-blue-50 disabled:opacity-40 dark:text-blue-300 dark:hover:bg-slate-800"><Download className="h-5 w-5" /></button>
+            <button aria-label="Download consultation summary" title="Download a clear PDF health summary" disabled={loading || !messages.some(message => message.content.trim())} onClick={() => void downloadSummary(consultationSummary(selectedPart, viewMode, symptoms, messages, interrupted))} className="rounded-full p-2 text-blue-600 hover:bg-blue-50 disabled:opacity-40 dark:text-blue-300 dark:hover:bg-slate-800"><Download className="h-5 w-5" /></button>
             <button 
               aria-label="Close chat"
               onClick={onClose}

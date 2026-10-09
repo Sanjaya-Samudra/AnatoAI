@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { validateChatRequest, readLimitedJson, MAX_REQUEST_BYTES, RequestError } from '../src/lib/chat-policy';
 import { buildChatMessages } from '../src/lib/chat-prompt';
 import { readChatStream } from '../src/lib/chat-stream';
-import { consultationSummary } from '../src/lib/consultation-summary';
+import { consultationSummary, createConsultationPdf } from '../src/lib/consultation-summary';
 import { checkRateLimit, localRateLimit } from '../src/lib/rate-limit';
 import { searchableParts } from '../src/lib/anatomy';
 
@@ -95,9 +95,15 @@ test('production requires shared limits and the Redis path uses atomic counters'
     for (const key of ['NODE_ENV', 'UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']) { if (previous[key] === undefined) delete process.env[key]; else process.env[key] = previous[key]; }
   }
 });
-test('download separates user facts from AI text and escapes executable markup', () => {
-  const html = consultationSummary('Knee', 'left-leg', {}, [{ role: 'user', content: '<script>alert(1)</script>' }, { role: 'assistant', content: 'Possible causes only.' }], true);
-  assert.ok(!html.includes('<script>')); assert.match(html, /&lt;script&gt;/);
-  assert.match(html, /Not provided/); assert.match(html, /AI-generated conversation notes/);
-  assert.match(html, /may be incomplete/); assert.match(html, /default-src 'none'/);
+test('download builds a real PDF with clean, non-duplicated consultation content', async () => {
+  const summary = consultationSummary('Knee', 'left-leg', { severity: 5 }, [
+    { role: 'user', content: 'Pain severity: 5/10. Please use these details for your follow-up guidance.' },
+    { role: 'user', content: 'Should I rest it?' },
+    { role: 'assistant', content: '**Possible causes**\n\n- Muscle strain' },
+  ], true, new Date('2026-10-09T12:00:00Z'));
+  assert.deepEqual(summary.userQuestions, ['Should I rest it?']);
+  assert.equal(summary.guidance.length, 1);
+  const pdf = await createConsultationPdf(summary);
+  assert.equal(new TextDecoder().decode(pdf.slice(0, 5)), '%PDF-');
+  assert.ok(pdf.length > 3000);
 });

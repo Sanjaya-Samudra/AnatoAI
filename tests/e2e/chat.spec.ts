@@ -35,8 +35,9 @@ test('keyboard search, initial scroll, symptom details, export, and layout', asy
   const downloadEvent = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download consultation summary' }).click();
   const download = await downloadEvent;
-  const html = await fs.readFile((await download.path())!, 'utf8');
-  expect(html).toContain('Left leg'); expect(html).toContain('5/10'); expect(html).toContain('AI-generated conversation notes');
+  expect(download.suggestedFilename()).toMatch(/^AnatoAI-health-summary-\d{4}-\d{2}-\d{2}\.pdf$/);
+  const pdf = await fs.readFile((await download.path())!);
+  expect(pdf.subarray(0, 5).toString()).toBe('%PDF-'); expect(pdf.length).toBeGreaterThan(3000);
   await page.getByRole('button', { name: 'Close chat' }).click();
   await page.getByRole('button', { name: 'Right Leg' }).click();
   await search.fill('right knee'); await search.press('Enter');

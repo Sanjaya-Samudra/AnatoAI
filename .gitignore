@@ -44,3 +44,5 @@ next-env.d.ts
 /.next-verify/
 /test-results/
 /playwright-report/
+/output/
+/tmp/
