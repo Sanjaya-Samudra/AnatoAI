@@ -18,15 +18,8 @@ interface ControlsProps {
   gender: "male" | "female";
 }
 
-// Minimal interface for the OrbitControls ref based on usage
-interface OrbitControlsRef {
-  target: THREE.Vector3;
-  update: () => void;
-  object: THREE.Camera;
-}
-
 function Controls({ viewMode, gender }: ControlsProps) {
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<React.ComponentRef<typeof OrbitControls>>(null);
   const { camera } = useThree();
 
   // Reset camera and controls when viewMode or gender changes

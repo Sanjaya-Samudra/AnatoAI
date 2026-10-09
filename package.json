@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node --use-system-ca node_modules/next/dist/bin/next dev --hostname 127.0.0.1 --port 3000 --webpack",
+    "build": "node --use-system-ca node_modules/next/dist/bin/next build --webpack",
+    "start": "node --use-system-ca node_modules/next/dist/bin/next start",
     "lint": "eslint"
   },
   "dependencies": {
@@ -35,5 +35,8 @@
     "tailwindcss": "^4",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22.19.0"
   }
 }

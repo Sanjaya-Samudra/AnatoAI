@@ -22,7 +22,7 @@ AnatoAI is a cutting-edge web application that combines interactive 3D visualiza
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
--   [Node.js](https://nodejs.org/) (v18 or higher)
+-   [Node.js](https://nodejs.org/) (v22.19 or higher; required for system certificate trust)
 -   npm or yarn
 
 ## ⚙️ Installation & Setup
@@ -45,6 +45,7 @@ Before you begin, ensure you have the following installed:
     
     ```env
     GROQ_API_KEY=your_groq_api_key_here
+    GROQ_MODEL=openai/gpt-oss-20b
     ```
     
     > **Note:** If no API key is provided, the application will run in "Mock Mode", providing static responses for demonstration purposes.
@@ -76,3 +77,19 @@ This project and its source code are proprietary. Unauthorized copying, modifica
 - Praveen Tharuka
 - Yasas Chamod
 - Sithum Dineth
+
+## Startup troubleshooting
+
+Run commands from the project directory. If generated Next.js files are corrupted, stop the server, remove only `.next`, then run `npm run dev` again. The cache is regenerated automatically. Source files must remain UTF-8 text; restore damaged source from a known-good Git revision after backing it up.
+
+The configuration uses `next.config.mjs` to avoid native TypeScript config compilation during startup on Windows.
+
+The development server binds to `localhost:3000`. Port 3000 is the development default. To choose another port, run `npm run dev -- --port 3002`.
+
+Inter is bundled locally under `src/app/fonts` using its SIL Open Font License, so starting/building the app does not require a Google Fonts download.
+
+The npm scripts enable Node.js system CA trust (`--use-system-ca`) to use trusted Windows certificates while keeping TLS verification enabled. Chat defaults to `openai/gpt-oss-20b`; set `GROQ_MODEL` to another model available to your Groq account when needed.
+
+Development and builds use Next.js webpack mode for the verified Windows startup path. The UI and model assets are unchanged.
+
+The first development request can take time to compile the 3D dependencies. Keep the terminal open and wait for the route compilation to finish. Subsequent requests use the generated cache. The homepage redirects on the server to `/landing`.

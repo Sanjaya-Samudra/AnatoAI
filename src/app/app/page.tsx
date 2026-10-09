@@ -18,7 +18,10 @@ export default function AppPage() {
     // Map internal IDs to view modes if necessary, but NavigationRail uses IDs that match viewMode
     // Actually partName coming from NavigationRail will be the ID (e.g., "head", "full")
     // Let's assume onSelect passes the ID directly.
-    setViewMode(partName as any);
+    const validViews: React.ComponentProps<typeof Scene>["viewMode"][] = ["full", "head", "torso", "left-hand", "right-hand", "left-leg", "right-leg"];
+    const nextView = validViews.find((view) => view === partName);
+    if (!nextView) return;
+    setViewMode(nextView);
     setSelectedPart(null);
   };
 
