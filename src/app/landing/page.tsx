@@ -98,6 +98,7 @@ export default function LandingPage() {
                 src="/Asset-2.png" 
                 alt="AnatoAI Logo" 
                 fill
+                sizes="40px"
                 className="object-contain p-1.5"
               />
             </div>
@@ -217,6 +218,7 @@ export default function LandingPage() {
                     src="/Asset-2.png" 
                     alt="AnatoAI Logo" 
                     fill
+                    sizes="44px"
                     className="object-contain p-2"
                   />
                 </div>
