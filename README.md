@@ -22,7 +22,7 @@ AnatoAI is a cutting-edge web application that combines interactive 3D visualiza
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
--   [Node.js](https://nodejs.org/) (v18 or higher)
+-   [Node.js](https://nodejs.org/) (v22.19 or higher; required for system certificate trust)
 -   npm or yarn
 
 ## ⚙️ Installation & Setup
@@ -45,6 +45,7 @@ Before you begin, ensure you have the following installed:
     
     ```env
     GROQ_API_KEY=your_groq_api_key_here
+    GROQ_MODEL=openai/gpt-oss-20b
     ```
     
     > **Note:** If no API key is provided, the application will run in "Mock Mode", providing static responses for demonstration purposes.
@@ -64,23 +65,31 @@ Before you begin, ensure you have the following installed:
 -   **Scroll**: Zoom in/out (limited range).
 -   **Click Pin**: Select a body part to open the AI analysis panel.
 
-## 🔧 Customization
-
-### Adjusting Pin Positions
-You can manually fine-tune the position of the interactive pins on the 3D model.
-
-1.  Open `src/components/BodyModel.tsx`.
-2.  Locate the `FULL_BODY_PARTS` configuration array.
-3.  Adjust the `pinOffset` values `[x, y, z]` for any body part.
-    *   Increasing values generally moves the pin further outward from the body center.
-
-```typescript
-// Example: Moving the Head pin further forward (z-axis)
-{ name: "Head", ..., pinOffset: [0, 0.15, 0.35] },
-```
-
 ## 📄 License
 
 **© 2025 AnatoAI. All Rights Reserved.**
 
 This project and its source code are proprietary. Unauthorized copying, modification, distribution, or use of this software, in whole or in part, is strictly prohibited without explicit permission from the copyright holders.
+
+## Development Team
+
+- Sanjaya Samudra
+- Praveen Tharuka
+- Yasas Chamod
+- Sithum Dineth
+
+## Startup troubleshooting
+
+Run commands from the project directory. If generated Next.js files are corrupted, stop the server, remove only `.next`, then run `npm run dev` again. The cache is regenerated automatically. Source files must remain UTF-8 text; restore damaged source from a known-good Git revision after backing it up.
+
+The configuration uses `next.config.mjs` to avoid native TypeScript config compilation during startup on Windows.
+
+The development server binds to `localhost:3000`. Port 3000 is the development default. To choose another port, run `npm run dev -- --port 3002`.
+
+Inter is bundled locally under `src/app/fonts` using its SIL Open Font License, so starting/building the app does not require a Google Fonts download.
+
+The npm scripts enable Node.js system CA trust (`--use-system-ca`) to use trusted Windows certificates while keeping TLS verification enabled. Chat defaults to `openai/gpt-oss-20b`; set `GROQ_MODEL` to another model available to your Groq account when needed.
+
+Development and builds use Next.js webpack mode for the verified Windows startup path. The UI and model assets are unchanged.
+
+The first development request can take time to compile the 3D dependencies. Keep the terminal open and wait for the route compilation to finish. Subsequent requests use the generated cache. The homepage redirects on the server to `/landing`.
