@@ -14,8 +14,13 @@ test('keyboard search, initial scroll, symptom details, export, and layout', asy
   });
   await page.goto('/app');
   const search = page.getByRole('combobox', { name: 'Search pain points' });
-  await search.fill('left knee'); await search.press('ArrowDown'); await search.press('Enter');
+  await page.getByRole('button', { name: 'Left Leg' }).click();
+  await search.fill('knee'); await search.press('ArrowDown'); await search.press('Enter');
   await expect(page.getByRole('heading', { name: 'Knee (Patellar)' })).toBeVisible();
+  if ((page.viewportSize()?.width ?? 0) >= 768) {
+    const canvas = await page.locator('canvas').boundingBox();
+    expect(canvas?.x).toBe(0); expect(canvas?.width).toBe(page.viewportSize()?.width);
+  }
   await expect(page.getByRole('note', { name: 'AI-generated medical information notice' })).toHaveCount(1);
   expect(requests[0].viewMode).toBe('left-leg'); expect(requests[0].messages).toEqual([]);
   expect(await page.locator('.custom-scrollbar').evaluate(el => el.scrollTop)).toBe(0);
@@ -46,9 +51,20 @@ test('keyboard search, initial scroll, symptom details, export, and layout', asy
 test('pain point search follows the selected body region', async ({ page }) => {
   await page.goto('/app');
   const search = page.getByRole('combobox', { name: 'Search pain points' });
-  await search.fill('knee');
-  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Left leg/ })).toBeVisible();
-  await expect(page.getByRole('option', { name: /Knee \(Patellar\) Right leg/ })).toBeVisible();
+  if ((page.viewportSize()?.width ?? 0) >= 768) {
+    const fullBodyButton = page.getByRole('button', { name: 'Full Body' });
+    await fullBodyButton.hover();
+    const navigation = await fullBodyButton.locator('..').boundingBox();
+    const searchBox = await search.boundingBox();
+    expect(navigation!.y).toBeGreaterThan(searchBox!.y + searchBox!.height);
+  }
+  await search.click();
+  await expect(page.getByRole('option')).toHaveCount(6);
+  await expect(page.getByRole('option', { name: /Left Leg Main body region/ })).toBeVisible();
+  await expect(page.getByRole('option', { name: /Knee/ })).toHaveCount(0);
+  await search.fill('left leg'); await search.press('Enter');
+  await expect(page.getByRole('button', { name: 'Left Leg' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('heading', { name: 'Left Leg' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Left Leg' }).click();
   await search.fill('knee');
   await expect(page.getByRole('option', { name: /Knee \(Patellar\) Left leg/ })).toBeVisible();

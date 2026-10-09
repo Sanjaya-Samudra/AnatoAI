@@ -28,7 +28,7 @@ export default function BodyPartSearch({ gender, viewMode, onSelect }: { gender:
     </div>
     {open && <ul id="pain-point-options" role="listbox" aria-label="Pain points" className="absolute top-full z-50 mt-2 max-h-[35dvh] w-full overflow-y-auto rounded-xl border border-blue-200 bg-white p-1 shadow-xl dark:border-slate-700 dark:bg-slate-900">
       {options.map((part, index) => <li id={`pain-option-${index}`} key={`${part.view}-${part.name}`} role="option" aria-selected={index === active} onMouseDown={event => event.preventDefault()} onClick={() => choose(index)} className={`cursor-pointer rounded-lg px-3 py-2 text-sm ${index === active ? 'bg-blue-100 dark:bg-blue-950' : 'hover:bg-blue-50 dark:hover:bg-slate-800'}`}><span className="block text-slate-800 dark:text-slate-100">{part.name}</span><span className="text-xs text-blue-600 dark:text-blue-300">{part.region}</span></li>)}
-      {!options.length && <li role="presentation" className="p-3 text-sm text-slate-500">No matching pain point in {VIEW_LABELS[viewMode].toLowerCase()}.</li>}
+      {!options.length && <li role="presentation" className="p-3 text-sm text-slate-500">No matching {viewMode === 'full' ? 'main body region' : `pain point in ${VIEW_LABELS[viewMode].toLowerCase()}`}.</li>}
     </ul>}
   </div>;
 }

@@ -15,7 +15,8 @@ test('a pin produces an initial request with the correct side before asking ques
   assert.match(messages[0].content, /Only AFTER this overview/);
 });
 test('anatomical catalog preserves left and right selections independently', () => {
-  assert.deepEqual(searchableParts('male').filter(p => p.name === 'Knee (Patellar)').map(p => p.view), ['left-leg', 'right-leg']);
+  assert.deepEqual(searchableParts('male').map(p => p.name), ['Head', 'Torso', 'Left Hand', 'Right Hand', 'Left Leg', 'Right Leg']);
+  assert.equal(searchableParts('male').find(p => p.name === 'Left Leg')?.view, 'left-leg');
   assert.ok(searchableParts('male', 'left-leg').length > 0);
   assert.ok(searchableParts('male', 'left-leg').every(p => p.view === 'left-leg'));
   assert.ok(searchableParts('male', 'right-leg').every(p => p.view === 'right-leg'));

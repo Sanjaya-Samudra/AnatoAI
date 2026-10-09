@@ -80,8 +80,8 @@ const BodyPart: React.FC<BodyPartProps> = ({
         <Html distanceFactor={8} position={[0, 0, 0]} style={{ pointerEvents: 'none' }}>
           <div className={`
             max-w-48 break-words text-center px-3 py-1.5 rounded-lg text-sm font-bold shadow-lg backdrop-blur-md font-sans
-            transform -translate-x-1/2 -translate-y-full transition-all duration-200
-            mb-4
+            transform transition-all duration-200
+            ${isSelected ? "translate-x-4 -translate-y-1/2" : "-translate-x-1/2 -translate-y-full mb-4"}
             ${isSelected 
               ? "bg-blue-600/95 text-white border border-blue-400" 
               : "bg-white/90 text-blue-700 border border-blue-300 shadow-md"}

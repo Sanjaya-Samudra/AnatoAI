@@ -95,7 +95,7 @@ export default function AppPage() {
 
       {/* Left Sidebar Navigation */}
       <div className={selectedPart ? "hidden md:block" : ""}><NavigationRail onSelect={handleSidebarClick} activeMode={viewMode} /></div>
-      <div className={`fixed left-4 right-4 top-20 z-40 md:left-28 md:top-28 ${selectedPart ? 'md:right-[500px]' : 'md:right-auto'}`}><BodyPartSearch key={`${gender}-${viewMode}`} gender={gender} viewMode={viewMode} onSelect={(name, view) => { setViewMode(view); setSelectedPart(name); }} /></div>
+      <div className={`fixed left-4 right-4 top-20 z-40 md:left-28 md:top-28 ${selectedPart ? 'md:right-[500px]' : 'md:right-auto'}`}><BodyPartSearch key={`${gender}-${viewMode}`} gender={gender} viewMode={viewMode} onSelect={(name, view) => { setViewMode(view); setSelectedPart(viewMode === "full" ? null : name); }} /></div>
 
       <div className={selectedPart ? "hidden md:block" : ""}><ThemeToggle aboveMobileNavigation /></div>
 
@@ -111,7 +111,7 @@ export default function AppPage() {
       </button>
 
       {/* 3D Scene */}
-      <div className={`absolute inset-0 z-0 ${selectedPart ? "bottom-[62dvh] top-28 md:top-0 md:bottom-0 md:right-[480px]" : ""}`}>
+      <div className={`absolute z-0 ${selectedPart ? "bottom-[62dvh] left-0 right-0 top-28 md:inset-0" : "inset-0"}`}>
         <SceneBoundary><Scene onSelectPart={handlePartSelect} selectedPart={selectedPart} gender={gender} viewMode={viewMode} /></SceneBoundary>
       </div>
 
