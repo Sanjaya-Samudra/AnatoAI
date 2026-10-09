@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { Html, useGLTF, useAnimations } from "@react-three/drei";
+import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { SkeletonUtils } from "three-stdlib";
 
-import { MALE_BODY_PARTS, FEMALE_BODY_PARTS, MALE_TORSO_PARTS, FEMALE_TORSO_PARTS, MALE_HEAD_PARTS, FEMALE_HEAD_PARTS, MALE_LEFT_ARM_PARTS, FEMALE_LEFT_ARM_PARTS, MALE_RIGHT_ARM_PARTS, FEMALE_RIGHT_ARM_PARTS, MALE_LEFT_LEG_PARTS, FEMALE_LEFT_LEG_PARTS, MALE_RIGHT_LEG_PARTS, FEMALE_RIGHT_LEG_PARTS } from "@/lib/anatomy";
+import { MALE_TORSO_PARTS, FEMALE_TORSO_PARTS, MALE_HEAD_PARTS, FEMALE_HEAD_PARTS, MALE_LEFT_ARM_PARTS, FEMALE_LEFT_ARM_PARTS, MALE_RIGHT_ARM_PARTS, FEMALE_RIGHT_ARM_PARTS, MALE_LEFT_LEG_PARTS, FEMALE_LEFT_LEG_PARTS, MALE_RIGHT_LEG_PARTS, FEMALE_RIGHT_LEG_PARTS } from "@/lib/anatomy";
+import { bodyRegionAt, type BodySurfaceBounds, type FullBodyRegion } from "@/lib/body-regions";
+
+const MAX_MARK_DOTS = 800;
 
 interface BodyPartProps {
   position: [number, number, number];
@@ -99,6 +103,10 @@ interface BodyModelProps {
   selectedPart: string | null;
   gender: "male" | "female";
   viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand" | "left-leg" | "right-leg";
+  marking: boolean;
+  clearSignal: number;
+  onAreaChange: (region: FullBodyRegion, hasArea: boolean) => void;
+  onModelReady: () => void;
 }
 
 export const BodyModel: React.FC<BodyModelProps> = ({
@@ -106,7 +114,49 @@ export const BodyModel: React.FC<BodyModelProps> = ({
   selectedPart,
   gender,
   viewMode,
+  marking,
+  clearSignal,
+  onAreaChange,
+  onModelReady,
 }) => {
+  const [markDots, setMarkDots] = useState<THREE.Vector3[]>([]);
+  const markDotsRef = useRef<THREE.Vector3[]>([]);
+  const markMesh = useRef<THREE.InstancedMesh>(null);
+  const strokeRegion = useRef<FullBodyRegion | null>(null);
+  const strokeActive = useRef(false);
+  const strokeDragged = useRef(false);
+  const areaReady = useRef(false);
+  const strokeStartScreen = useRef<{ x: number; y: number } | null>(null);
+  const previousPoint = useRef<THREE.Vector3 | null>(null);
+  const dotTransform = useMemo(() => new THREE.Object3D(), []);
+
+  useEffect(() => {
+    const endStroke = () => { strokeActive.current = false; };
+    window.addEventListener('pointerup', endStroke);
+    window.addEventListener('pointercancel', endStroke);
+    return () => {
+      window.removeEventListener('pointerup', endStroke);
+      window.removeEventListener('pointercancel', endStroke);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!markMesh.current) return;
+    markMesh.current.count = markDots.length;
+    markDots.forEach((point, index) => {
+      dotTransform.position.copy(point);
+      dotTransform.updateMatrix();
+      markMesh.current?.setMatrixAt(index, dotTransform.matrix);
+    });
+    markMesh.current.instanceMatrix.needsUpdate = true;
+  }, [markDots, dotTransform]);
+
+  useLayoutEffect(() => {
+    markDotsRef.current = [];
+    strokeRegion.current = null;
+    strokeActive.current = false;
+    if (markMesh.current) markMesh.current.count = 0;
+  }, [clearSignal]);
   const modelPath = useMemo(() => {
     if (viewMode === "head") {
       return gender === "male" ? "/models/male/male-head.glb" : "/models/female/female-head.glb";
@@ -167,11 +217,16 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     });
   }, [scene, actions]);
 
-  const { modelScale, modelPosition } = useMemo(() => {
+  useEffect(() => {
+    onModelReady();
+  }, [onModelReady]);
+
+  const { modelScale, modelPosition, surfaceBounds } = useMemo(() => {
     if (!scene) {
       return { 
         modelScale: [1, 1, 1] as [number, number, number], 
-        modelPosition: [0, 0, 0] as [number, number, number] 
+        modelPosition: [0, 0, 0] as [number, number, number],
+        surfaceBounds: { bottom: -1.5, height: 3.25, width: 2, centerX: 0 } as BodySurfaceBounds,
       };
     }
 
@@ -204,34 +259,89 @@ export const BodyModel: React.FC<BodyModelProps> = ({
 
     return {
       modelScale: [finalScale, finalScale, finalScale] as [number, number, number],
-      modelPosition: position
+      modelPosition: position,
+      surfaceBounds: {
+        bottom: box.min.y * finalScale + position[1],
+        height: size.y * finalScale,
+        width: size.x * finalScale,
+        centerX: center.x * finalScale + position[0],
+      } as BodySurfaceBounds,
     };
   }, [scene]);
+
+  const stamp = (point: THREE.Vector3, event: ThreeEvent<PointerEvent>) => {
+    if (markDotsRef.current.length + 5 > MAX_MARK_DOTS) return;
+    const front = event.ray.direction.clone().multiplyScalar(-0.025);
+    const right = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 0).multiplyScalar(0.023);
+    const up = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 1).multiplyScalar(0.023);
+    const center = point.clone().add(front);
+    markDotsRef.current.push(center, center.clone().add(right), center.clone().sub(right), center.clone().add(up), center.clone().sub(up));
+  };
+
+  const startMark = (event: ThreeEvent<PointerEvent>) => {
+    if (viewMode !== 'full' || !marking || (event.nativeEvent.pointerType === 'mouse' && event.nativeEvent.button !== 0)) return;
+    event.stopPropagation();
+    const region = bodyRegionAt(event.point, surfaceBounds);
+    strokeRegion.current = region;
+    strokeActive.current = true;
+    strokeDragged.current = false;
+    areaReady.current = false;
+    strokeStartScreen.current = { x: event.nativeEvent.clientX, y: event.nativeEvent.clientY };
+    previousPoint.current = event.point.clone();
+    markDotsRef.current = [];
+    stamp(event.point, event);
+    setMarkDots([...markDotsRef.current]);
+    onAreaChange(region, false);
+  };
+
+  const continueMark = (event: ThreeEvent<PointerEvent>) => {
+    if (!strokeActive.current || !marking || viewMode !== 'full') return;
+    event.stopPropagation();
+    const start = strokeStartScreen.current;
+    if (start && Math.hypot(event.nativeEvent.clientX - start.x, event.nativeEvent.clientY - start.y) >= 7) strokeDragged.current = true;
+    if (!strokeDragged.current) return;
+    const last = previousPoint.current;
+    if (!last) return;
+    const distance = last.distanceTo(event.point);
+    if (distance < 0.028) return;
+    if (distance > 0.35) {
+      stamp(event.point, event);
+      setMarkDots([...markDotsRef.current]);
+      previousPoint.current = event.point.clone();
+      if (!areaReady.current && strokeRegion.current) { areaReady.current = true; onAreaChange(strokeRegion.current, true); }
+      return;
+    }
+    const steps = Math.min(12, Math.floor(distance / 0.028));
+    for (let step = 1; step <= steps; step++) stamp(last.clone().lerp(event.point, step / steps), event);
+    setMarkDots([...markDotsRef.current]);
+    previousPoint.current = event.point.clone();
+    if (!areaReady.current && markDotsRef.current.length >= 20 && strokeRegion.current) { areaReady.current = true; onAreaChange(strokeRegion.current, true); }
+  };
+
+  const finishMark = () => {
+    if (!strokeActive.current) return;
+    strokeActive.current = false;
+    if (!strokeDragged.current && strokeRegion.current) {
+      onSelectPart(strokeRegion.current);
+    } else if (strokeRegion.current && markDotsRef.current.length > 5) {
+      onAreaChange(strokeRegion.current, true);
+    }
+  };
 
   return (
     <group position={[0, 0, 0]}>
       {/* The Real 3D Model */}
-      <group scale={modelScale} position={modelPosition}>
+      <group scale={modelScale} position={modelPosition} onPointerDown={startMark} onPointerMove={continueMark} onPointerUp={finishMark}>
         <primitive object={scene} />
       </group>
 
+      {viewMode === 'full' && <instancedMesh ref={markMesh} args={[undefined, undefined, MAX_MARK_DOTS]} raycast={() => undefined} frustumCulled={false}>
+        <sphereGeometry args={[0.013, 6, 6]} />
+        <meshBasicMaterial color="#2563eb" transparent opacity={0.92} depthWrite={false} />
+      </instancedMesh>}
+
       {/* Annotations Group */}
       <group>
-        {/* 1. Full Body View */}
-        {viewMode === "full" && (gender === "male" ? MALE_BODY_PARTS : FEMALE_BODY_PARTS).map((part) => (
-          <BodyPart
-            key={part.name}
-            position={part.position}
-            args={part.args as [number, number, number] | [number, number, number, number]}
-            name={part.name}
-            type={part.type}
-            rotation={part.rotation}
-            onSelect={onSelectPart}
-            selectedPart={selectedPart}
-            markerRadius={0.04} // Smaller markers for full body view
-          />
-        ))}
-
         {/* 2. Head View */}
         {viewMode === "head" && (gender === "male" ? MALE_HEAD_PARTS : FEMALE_HEAD_PARTS).map((part) => (
           <BodyPart

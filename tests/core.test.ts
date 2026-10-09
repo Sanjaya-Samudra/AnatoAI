@@ -6,6 +6,7 @@ import { readChatStream } from '../src/lib/chat-stream';
 import { consultationSummary, createConsultationPdf } from '../src/lib/consultation-summary';
 import { checkRateLimit, localRateLimit } from '../src/lib/rate-limit';
 import { searchableParts } from '../src/lib/anatomy';
+import { bodyRegionAt } from '../src/lib/body-regions';
 
 const valid = { messages: [], selectedPart: 'Knee (Patellar)', gender: 'male', viewMode: 'left-leg' };
 test('a pin produces an initial request with the correct side before asking questions', () => {
@@ -21,6 +22,15 @@ test('anatomical catalog preserves left and right selections independently', () 
   assert.ok(searchableParts('male', 'left-leg').every(p => p.view === 'left-leg'));
   assert.ok(searchableParts('male', 'right-leg').every(p => p.view === 'right-leg'));
   assert.throws(() => validateChatRequest({ ...valid, viewMode: 'head' }), RequestError);
+});
+test('full-body surface coordinates stay inside their starting anatomy region', () => {
+  const bounds = { bottom: -1.5, height: 3.25, width: 2, centerX: 0 };
+  assert.equal(bodyRegionAt({ x: 0, y: 1.5 }, bounds), 'Head');
+  assert.equal(bodyRegionAt({ x: 0, y: 0.5 }, bounds), 'Torso');
+  assert.equal(bodyRegionAt({ x: 0.7, y: 0.5 }, bounds), 'Left Hand');
+  assert.equal(bodyRegionAt({ x: -0.7, y: 0.5 }, bounds), 'Right Hand');
+  assert.equal(bodyRegionAt({ x: 0.2, y: -0.9 }, bounds), 'Left Leg');
+  assert.equal(bodyRegionAt({ x: -0.2, y: -0.9 }, bounds), 'Right Leg');
 });
 test('reject untrusted roles, invented points, oversized history and messages', () => {
   for (const change of [

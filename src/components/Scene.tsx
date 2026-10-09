@@ -1,15 +1,17 @@
 "use client";
 
-import React, { Suspense, useRef, useEffect, useState } from "react";
+import React, { Suspense, useRef, useEffect, useState, useCallback } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Environment, ContactShadows, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import { BodyModel } from "./BodyModel";
 import ModelLoading from "./ModelLoading";
 import { usePageVisible } from "./usePageVisible";
+import type { FullBodyRegion } from "@/lib/body-regions";
 
 interface SceneProps {
   onSelectPart: (part: string) => void;
+  onAnalyzeArea: (region: FullBodyRegion) => void;
   selectedPart: string | null;
   gender: "male" | "female";
   viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand" | "left-leg" | "right-leg";
@@ -18,9 +20,10 @@ interface SceneProps {
 interface ControlsProps {
   viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand" | "left-leg" | "right-leg";
   gender: "male" | "female";
+  marking: boolean;
 }
 
-function Controls({ viewMode, gender }: ControlsProps) {
+function Controls({ viewMode, gender, marking }: ControlsProps) {
   const controlsRef = useRef<React.ComponentRef<typeof OrbitControls>>(null);
   const { camera } = useThree();
 
@@ -68,6 +71,7 @@ function Controls({ viewMode, gender }: ControlsProps) {
     <OrbitControls 
       ref={controlsRef}
       makeDefault 
+      enabled={viewMode !== 'full' || !marking}
       minDistance={minDistance} 
       maxDistance={maxDistance}
       minPolarAngle={0}
@@ -84,12 +88,17 @@ function Controls({ viewMode, gender }: ControlsProps) {
   );
 }
 
-export default function Scene({ onSelectPart, selectedPart, gender, viewMode }: SceneProps) {
+export default function Scene({ onSelectPart, onAnalyzeArea, selectedPart, gender, viewMode }: SceneProps) {
   const [quality, setQuality] = useState(1.5);
+  const [marking, setMarking] = useState(true);
+  const [selectedArea, setSelectedArea] = useState<{ region: FullBodyRegion; hasArea: boolean } | null>(null);
+  const [clearVersion, setClearVersion] = useState(0);
+  const [modelReady, setModelReady] = useState(false);
+  const handleModelReady = useCallback(() => setModelReady(true), []);
   const visible = usePageVisible();
   return (
     <div className="relative w-full h-full bg-transparent">
-      <Canvas dpr={quality} frameloop={visible ? "always" : "never"} camera={{ position: [0, 1, 5], fov: 45 }}>
+      <Canvas dpr={quality} frameloop={visible ? "always" : "never"} camera={{ position: [0, 1, 5], fov: 45 }} style={{ touchAction: viewMode === 'full' && marking ? 'none' : 'auto' }}>
         <Suspense fallback={null}>
           <PerformanceMonitor onDecline={() => setQuality(1)} onIncline={() => setQuality(1.5)} flipflops={2} onFallback={() => setQuality(1)} />
           <ambientLight intensity={0.6} />
@@ -97,16 +106,27 @@ export default function Scene({ onSelectPart, selectedPart, gender, viewMode }: 
           <pointLight position={[-10, -10, -10]} intensity={0.4} color="#3b82f6" />
           <directionalLight position={[5, 5, 5]} intensity={0.8} />
           
-          <BodyModel onSelectPart={onSelectPart} selectedPart={selectedPart} gender={gender} viewMode={viewMode} />
+          <BodyModel key={`${gender}-${viewMode}`} onSelectPart={onSelectPart} selectedPart={selectedPart} gender={gender} viewMode={viewMode} marking={marking} clearSignal={clearVersion} onAreaChange={(region, hasArea) => setSelectedArea({ region, hasArea })} onModelReady={handleModelReady} />
           
           {/* Shadows adjusted for lighter background */}
           <ContactShadows position={[0, -1.6, 0]} resolution={quality === 1 ? 512 : 1024} scale={10} blur={1.5} opacity={0.3} far={10} color="#1e3a8a" />
           <Environment preset="sunset" />
           
-          <Controls key={`${viewMode}-${gender}`} viewMode={viewMode} gender={gender} />
+          <Controls key={`${viewMode}-${gender}`} viewMode={viewMode} gender={gender} marking={marking} />
         </Suspense>
       </Canvas>
       <ModelLoading />
+      {viewMode === 'full' && modelReady && !selectedPart && <div className="absolute bottom-28 left-1/2 z-10 w-[min(92vw,400px)] -translate-x-1/2 rounded-2xl border border-blue-200 bg-white/95 p-2 shadow-xl backdrop-blur dark:border-slate-700 dark:bg-slate-900/95 md:bottom-auto md:left-auto md:right-6 md:top-28 md:w-[330px] md:translate-x-0" aria-label="Full body area selection">
+        <div className="flex gap-2">
+          <button type="button" aria-pressed={marking} onClick={() => setMarking(true)} className={`flex-1 rounded-xl px-3 py-2 text-sm font-semibold ${marking ? 'bg-blue-600 text-white' : 'text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-slate-800'}`}>Draw pain area</button>
+          <button type="button" aria-pressed={!marking} onClick={() => setMarking(false)} className={`flex-1 rounded-xl px-3 py-2 text-sm font-semibold ${!marking ? 'bg-blue-600 text-white' : 'text-blue-700 hover:bg-blue-50 dark:text-blue-300 dark:hover:bg-slate-800'}`}>Rotate model</button>
+        </div>
+        <p className="px-2 pt-2 text-center text-xs text-slate-600 dark:text-slate-300" role="status">{selectedArea ? `${selectedArea.region} selected${selectedArea.hasArea ? '' : ' - drag to mark a larger area'}` : marking ? 'Drag over the body to mark where it hurts.' : 'Drag to rotate, then choose Draw pain area.'}</p>
+        {selectedArea && <div className="mt-2 flex gap-2">
+          <button type="button" onClick={() => { setSelectedArea(null); setClearVersion(value => value + 1); }} className="flex-1 rounded-xl border border-blue-200 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 dark:border-slate-700 dark:text-blue-300 dark:hover:bg-slate-800">Cancel selection</button>
+          <button type="button" disabled={!selectedArea.hasArea} onClick={() => onAnalyzeArea(selectedArea.region)} className="flex-1 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40">Analyze area</button>
+        </div>}
+      </div>}
     </div>
   );
 }
