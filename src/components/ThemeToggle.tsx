@@ -4,13 +4,11 @@ import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+const subscribe = () => () => {};
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+export function ThemeToggle({ aboveMobileNavigation = false }: { aboveMobileNavigation?: boolean }) {
+  const { theme, setTheme } = useTheme();
+  const mounted = React.useSyncExternalStore(subscribe, () => true, () => false);
 
   if (!mounted) {
     return null;
@@ -19,7 +17,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="fixed bottom-6 left-6 z-50 p-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group"
+      className={`fixed ${aboveMobileNavigation ? "bottom-20 md:bottom-6" : "bottom-6"} left-6 z-50 p-3 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group`}
       aria-label="Toggle Theme"
     >
       <div className="relative w-6 h-6">

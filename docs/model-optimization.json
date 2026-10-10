@@ -1,0 +1,117 @@
+{
+  "method": "Meshopt lossless buffer compression and lossless PNG recompression; no simplification or quantization",
+  "models": [
+    {
+      "model": "male/GlowBody.glb",
+      "beforeBytes": 11227832,
+      "afterBytes": 2816188,
+      "savedPercent": 74.9,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "male/male-body.glb",
+      "beforeBytes": 36620232,
+      "afterBytes": 16661040,
+      "savedPercent": 54.5,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "male/male-head.glb",
+      "beforeBytes": 59186316,
+      "afterBytes": 23710104,
+      "savedPercent": 59.9,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "male/male-left-arm.glb",
+      "beforeBytes": 6440984,
+      "afterBytes": 1562980,
+      "savedPercent": 75.7,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "male/male-left-leg.glb",
+      "beforeBytes": 15060204,
+      "afterBytes": 5895068,
+      "savedPercent": 60.9,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "male/male-right-arm.glb",
+      "beforeBytes": 6726760,
+      "afterBytes": 1629856,
+      "savedPercent": 75.8,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "male/male-right-leg.glb",
+      "beforeBytes": 10156236,
+      "afterBytes": 3527536,
+      "savedPercent": 65.3,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "male/male-torso.glb",
+      "beforeBytes": 25696396,
+      "afterBytes": 5755024,
+      "savedPercent": 77.6,
+      "verified": "Original geometry, transforms, skins and animations match"
+    },
+    {
+      "model": "female/female-body.glb",
+      "beforeBytes": 4559016,
+      "afterBytes": 1970688,
+      "savedPercent": 56.8,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    },
+    {
+      "model": "female/female-head.glb",
+      "beforeBytes": 14837036,
+      "afterBytes": 5060748,
+      "savedPercent": 65.9,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    },
+    {
+      "model": "female/female-left-arm.glb",
+      "beforeBytes": 5502964,
+      "afterBytes": 1352668,
+      "savedPercent": 75.4,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    },
+    {
+      "model": "female/female-left-leg.glb",
+      "beforeBytes": 14749624,
+      "afterBytes": 5591880,
+      "savedPercent": 62.1,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    },
+    {
+      "model": "female/female-right-arm.glb",
+      "beforeBytes": 5316092,
+      "afterBytes": 1307724,
+      "savedPercent": 75.4,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    },
+    {
+      "model": "female/female-right-leg.glb",
+      "beforeBytes": 14780988,
+      "afterBytes": 5597364,
+      "savedPercent": 62.1,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    },
+    {
+      "model": "female/female-torso.glb",
+      "beforeBytes": 25174172,
+      "afterBytes": 5557300,
+      "savedPercent": 77.9,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    },
+    {
+      "model": "female/GlowBodyFemale.glb",
+      "beforeBytes": 10832264,
+      "afterBytes": 2736956,
+      "savedPercent": 74.7,
+      "verified": "Geometry, transforms, skins, animation samples, and texture pixels preserved; app decoder tested"
+    }
+  ]
+}

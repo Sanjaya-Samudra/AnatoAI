@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -27,9 +27,9 @@ export const GlowModelRotator: React.FC<GlowModelRotatorProps> = ({
   }, [scene]);
 
   // Rotate on Y axis
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (groupRef.current) {
-      const rotationSpeed = 0.005;
+      const rotationSpeed = Math.min(delta, 0.05) * 0.3;
       groupRef.current.rotation.y += direction === "clockwise" ? rotationSpeed : -rotationSpeed;
     }
   });
