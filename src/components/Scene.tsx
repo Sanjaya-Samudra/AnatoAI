@@ -2,7 +2,7 @@
 
 import React, { Suspense, useRef, useEffect, useState, useCallback } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Environment, ContactShadows, PerformanceMonitor } from "@react-three/drei";
+import { OrbitControls, ContactShadows, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import { BodyModel } from "./BodyModel";
 import ModelLoading from "./ModelLoading";
@@ -109,9 +109,6 @@ export default function Scene({ onSelectPart, onAnalyzeArea, selectedPart, gende
         </Suspense>
         {/* Shadows adjusted for lighter background */}
         <ContactShadows position={[0, -1.6, 0]} resolution={quality === 1 ? 512 : 1024} scale={10} blur={1.5} opacity={0.3} far={10} color="#1e3a8a" />
-        <Suspense fallback={null}>
-          <Environment preset="sunset" />
-        </Suspense>
         <Controls key={`${viewMode}-${gender}`} viewMode={viewMode} gender={gender} marking={marking} />
       </Canvas>
       <ModelLoading ready={modelReady} />
