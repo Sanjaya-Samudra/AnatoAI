@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Html, useGLTF, useAnimations } from "@react-three/drei";
 import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
@@ -8,8 +8,10 @@ import { SkeletonUtils } from "three-stdlib";
 
 import { MALE_TORSO_PARTS, FEMALE_TORSO_PARTS, MALE_HEAD_PARTS, FEMALE_HEAD_PARTS, MALE_LEFT_ARM_PARTS, FEMALE_LEFT_ARM_PARTS, MALE_RIGHT_ARM_PARTS, FEMALE_RIGHT_ARM_PARTS, MALE_LEFT_LEG_PARTS, FEMALE_LEFT_LEG_PARTS, MALE_RIGHT_LEG_PARTS, FEMALE_RIGHT_LEG_PARTS } from "@/lib/anatomy";
 import { bodyRegionAt, type BodySurfaceBounds, type FullBodyRegion } from "@/lib/body-regions";
+import { BodyPaintVolume, createPaintMaterial } from "@/lib/body-paint";
 
-const MAX_MARK_DOTS = 800;
+const BRUSH_RADIUS = 0.105;
+const BRUSH_STEP = 0.032;
 
 interface BodyPartProps {
   position: [number, number, number];
@@ -119,16 +121,13 @@ export const BodyModel: React.FC<BodyModelProps> = ({
   onAreaChange,
   onModelReady,
 }) => {
-  const [markDots, setMarkDots] = useState<THREE.Vector3[]>([]);
-  const markDotsRef = useRef<THREE.Vector3[]>([]);
-  const markMesh = useRef<THREE.InstancedMesh>(null);
   const strokeRegion = useRef<FullBodyRegion | null>(null);
   const strokeActive = useRef(false);
   const strokeDragged = useRef(false);
   const areaReady = useRef(false);
+  const paintedSamples = useRef(0);
   const strokeStartScreen = useRef<{ x: number; y: number } | null>(null);
   const previousPoint = useRef<THREE.Vector3 | null>(null);
-  const dotTransform = useMemo(() => new THREE.Object3D(), []);
 
   useEffect(() => {
     const endStroke = () => { strokeActive.current = false; };
@@ -140,23 +139,6 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     };
   }, []);
 
-  useLayoutEffect(() => {
-    if (!markMesh.current) return;
-    markMesh.current.count = markDots.length;
-    markDots.forEach((point, index) => {
-      dotTransform.position.copy(point);
-      dotTransform.updateMatrix();
-      markMesh.current?.setMatrixAt(index, dotTransform.matrix);
-    });
-    markMesh.current.instanceMatrix.needsUpdate = true;
-  }, [markDots, dotTransform]);
-
-  useLayoutEffect(() => {
-    markDotsRef.current = [];
-    strokeRegion.current = null;
-    strokeActive.current = false;
-    if (markMesh.current) markMesh.current.count = 0;
-  }, [clearSignal]);
   const modelPath = useMemo(() => {
     if (viewMode === "head") {
       return gender === "male" ? "/models/male/male-head.glb" : "/models/female/female-head.glb";
@@ -221,12 +203,14 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     onModelReady();
   }, [onModelReady]);
 
-  const { modelScale, modelPosition, surfaceBounds } = useMemo(() => {
+  const { modelScale, modelPosition, surfaceBounds, paintMin, paintMax } = useMemo(() => {
     if (!scene) {
       return { 
         modelScale: [1, 1, 1] as [number, number, number], 
         modelPosition: [0, 0, 0] as [number, number, number],
         surfaceBounds: { bottom: -1.5, height: 3.25, width: 2, centerX: 0 } as BodySurfaceBounds,
+        paintMin: new THREE.Vector3(-1, -1.6, -1),
+        paintMax: new THREE.Vector3(1, 1.7, 1),
       };
     }
 
@@ -266,33 +250,65 @@ export const BodyModel: React.FC<BodyModelProps> = ({
         width: size.x * finalScale,
         centerX: center.x * finalScale + position[0],
       } as BodySurfaceBounds,
+      paintMin: box.min.clone().multiplyScalar(finalScale).add(new THREE.Vector3(...position)).addScalar(-BRUSH_RADIUS),
+      paintMax: box.max.clone().multiplyScalar(finalScale).add(new THREE.Vector3(...position)).addScalar(BRUSH_RADIUS),
     };
   }, [scene]);
 
-  const stamp = (point: THREE.Vector3, event: ThreeEvent<PointerEvent>) => {
-    if (markDotsRef.current.length + 5 > MAX_MARK_DOTS) return;
-    // Sink each sphere's center just below the surface so only its outer half shows.
-    const inward = event.ray.direction.clone().multiplyScalar(0.003);
-    const right = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 0).multiplyScalar(0.016);
-    const up = new THREE.Vector3().setFromMatrixColumn(event.camera.matrixWorld, 1).multiplyScalar(0.016);
-    const center = point.clone().add(inward);
-    markDotsRef.current.push(center, center.clone().add(right), center.clone().sub(right), center.clone().add(up), center.clone().sub(up));
+  const paintVolume = useMemo(() => viewMode === 'full' ? new BodyPaintVolume(paintMin, paintMax) : null, [paintMin, paintMax, viewMode]);
+
+  useEffect(() => {
+    if (!paintVolume) return;
+    const changed: { mesh: THREE.Mesh; original: THREE.Material | THREE.Material[]; painted: THREE.Material[] }[] = [];
+    scene.traverse(child => {
+      if (!(child as THREE.Mesh).isMesh) return;
+      const mesh = child as THREE.Mesh;
+      const original = mesh.material;
+      const painted = (Array.isArray(original) ? original : [original]).map(material => createPaintMaterial(material, paintVolume));
+      mesh.material = Array.isArray(original) ? painted : painted[0];
+      changed.push({ mesh, original, painted });
+    });
+    return () => {
+      changed.forEach(({ mesh, original, painted }) => {
+        mesh.material = original;
+        painted.forEach(material => material.dispose());
+      });
+      paintVolume.texture.dispose();
+    };
+  }, [scene, paintVolume]);
+
+  useEffect(() => {
+    strokeRegion.current = null;
+    strokeActive.current = false;
+    areaReady.current = false;
+    paintedSamples.current = 0;
+    previousPoint.current = null;
+    paintVolume?.clear();
+  }, [clearSignal, paintVolume]);
+
+  const paintAt = (point: THREE.Vector3, region: FullBodyRegion) => {
+    if (!paintVolume?.paint(point, region, surfaceBounds, BRUSH_RADIUS)) return;
+    paintedSamples.current++;
+    if (!areaReady.current && paintedSamples.current >= 3) {
+      areaReady.current = true;
+      onAreaChange(region, true);
+    }
   };
 
   const startMark = (event: ThreeEvent<PointerEvent>) => {
     if (viewMode !== 'full' || !marking || (event.nativeEvent.pointerType === 'mouse' && event.nativeEvent.button !== 0)) return;
     event.stopPropagation();
     const region = bodyRegionAt(event.point, surfaceBounds);
-    strokeRegion.current = region;
+    if (strokeRegion.current && strokeRegion.current !== region) return;
+    if (!strokeRegion.current) {
+      strokeRegion.current = region;
+      onAreaChange(region, false);
+    }
     strokeActive.current = true;
     strokeDragged.current = false;
-    areaReady.current = false;
     strokeStartScreen.current = { x: event.nativeEvent.clientX, y: event.nativeEvent.clientY };
     previousPoint.current = event.point.clone();
-    markDotsRef.current = [];
-    stamp(event.point, event);
-    setMarkDots([...markDotsRef.current]);
-    onAreaChange(region, false);
+    paintAt(event.point, region);
   };
 
   const continueMark = (event: ThreeEvent<PointerEvent>) => {
@@ -308,29 +324,23 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     }
     const last = previousPoint.current;
     if (!last) {
-      stamp(event.point, event);
+      paintAt(event.point, region);
       previousPoint.current = event.point.clone();
-      setMarkDots([...markDotsRef.current]);
-      if (!areaReady.current && markDotsRef.current.length >= 20) { areaReady.current = true; onAreaChange(region, true); }
       return;
     }
     const distance = last.distanceTo(event.point);
-    if (distance < 0.028) return;
-    if (distance > 0.35) {
-      stamp(event.point, event);
-      setMarkDots([...markDotsRef.current]);
+    if (distance < BRUSH_STEP) return;
+    if (distance > 0.4) {
+      paintAt(event.point, region);
       previousPoint.current = event.point.clone();
-      if (!areaReady.current && markDotsRef.current.length >= 20) { areaReady.current = true; onAreaChange(region, true); }
       return;
     }
-    const steps = Math.min(12, Math.floor(distance / 0.028));
+    const steps = Math.min(16, Math.ceil(distance / BRUSH_STEP));
     for (let step = 1; step <= steps; step++) {
       const point = last.clone().lerp(event.point, step / steps);
-      if (bodyRegionAt(point, surfaceBounds) === region) stamp(point, event);
+      if (bodyRegionAt(point, surfaceBounds) === region) paintAt(point, region);
     }
-    setMarkDots([...markDotsRef.current]);
     previousPoint.current = event.point.clone();
-    if (!areaReady.current && markDotsRef.current.length >= 20) { areaReady.current = true; onAreaChange(region, true); }
   };
 
   const finishMark = () => {
@@ -355,11 +365,6 @@ export const BodyModel: React.FC<BodyModelProps> = ({
       <group scale={modelScale} position={modelPosition} onPointerDown={startMark} onPointerMove={continueMark} onPointerUp={finishMark} onClick={selectOnClick}>
         <primitive object={scene} />
       </group>
-
-      {viewMode === 'full' && <instancedMesh ref={markMesh} args={[undefined, undefined, MAX_MARK_DOTS]} raycast={() => undefined} frustumCulled={false}>
-        <sphereGeometry args={[0.009, 8, 8]} />
-        <meshBasicMaterial color="#2563eb" transparent opacity={0.94} depthTest depthWrite={false} />
-      </instancedMesh>}
 
       {/* Annotations Group */}
       <group>

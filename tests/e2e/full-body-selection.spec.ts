@@ -79,6 +79,35 @@ test('a stroke stops at its starting region and resumes only when it returns', a
   await page.screenshot({ path: 'output/full-body-region-boundary.png' });
 });
 
+test('the same area can be painted on both sides after rotating the model', async ({ page }) => {
+  await page.goto('/app');
+  await expect(page.getByRole('button', { name: 'Draw pain area' })).toBeVisible({ timeout: 60_000 });
+  await page.getByRole('button', { name: 'Draw pain area' }).click();
+  const canvas = await page.locator('canvas').boundingBox();
+  expect(canvas).not.toBeNull();
+  const center = canvas!.x + canvas!.width / 2;
+  const top = canvas!.y;
+  await page.mouse.move(center - 15, top + 125);
+  await page.mouse.down();
+  await page.mouse.move(center + 20, top + 145, { steps: 10 });
+  await page.mouse.up();
+  await expect(page.getByRole('button', { name: 'Analyze area' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Done drawing' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'rotate, then draw again' })).toBeVisible();
+  await page.mouse.move(center + 210, top + 330);
+  await page.mouse.down();
+  await page.mouse.move(center - 240, top + 330, { steps: 20 });
+  await page.mouse.up();
+  await page.getByRole('button', { name: 'Draw pain area' }).click();
+  await page.mouse.move(center - 15, top + 125);
+  await page.mouse.down();
+  await page.mouse.move(center + 20, top + 145, { steps: 10 });
+  await page.mouse.up();
+  await expect(page.getByRole('status').filter({ hasText: 'Head selected' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Analyze area' })).toBeEnabled();
+  await page.screenshot({ path: 'output/full-body-front-back-selection.png' });
+});
+
 test('drawing identifies torso, arms, and legs from the surface where it starts', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Desktop model coordinates are used for this region-boundary check.');
   await page.goto('/app');
