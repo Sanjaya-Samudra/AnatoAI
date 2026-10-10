@@ -1,11 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Html, useGLTF, useAnimations } from "@react-three/drei";
+import type { ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
 import { SkeletonUtils } from "three-stdlib";
 
-import { MALE_BODY_PARTS, FEMALE_BODY_PARTS, MALE_TORSO_PARTS, FEMALE_TORSO_PARTS, MALE_HEAD_PARTS, FEMALE_HEAD_PARTS, MALE_LEFT_ARM_PARTS, FEMALE_LEFT_ARM_PARTS, MALE_RIGHT_ARM_PARTS, FEMALE_RIGHT_ARM_PARTS, MALE_LEFT_LEG_PARTS, FEMALE_LEFT_LEG_PARTS, MALE_RIGHT_LEG_PARTS, FEMALE_RIGHT_LEG_PARTS } from "@/lib/anatomy";
+import { MALE_TORSO_PARTS, FEMALE_TORSO_PARTS, MALE_HEAD_PARTS, FEMALE_HEAD_PARTS, MALE_LEFT_ARM_PARTS, FEMALE_LEFT_ARM_PARTS, MALE_RIGHT_ARM_PARTS, FEMALE_RIGHT_ARM_PARTS, MALE_LEFT_LEG_PARTS, FEMALE_LEFT_LEG_PARTS, MALE_RIGHT_LEG_PARTS, FEMALE_RIGHT_LEG_PARTS } from "@/lib/anatomy";
+import { bodyRegionAt, type BodySurfaceBounds, type FullBodyRegion } from "@/lib/body-regions";
+import { BodyPaintVolume, createPaintMaterial } from "@/lib/body-paint";
+
+const BRUSH_RADIUS = 0.105;
+const BRUSH_STEP = 0.032;
 
 interface BodyPartProps {
   position: [number, number, number];
@@ -99,6 +105,10 @@ interface BodyModelProps {
   selectedPart: string | null;
   gender: "male" | "female";
   viewMode: "full" | "head" | "torso" | "left-hand" | "right-hand" | "left-leg" | "right-leg";
+  marking: boolean;
+  clearSignal: number;
+  onAreaChange: (region: FullBodyRegion, hasArea: boolean) => void;
+  onModelReady: () => void;
 }
 
 export const BodyModel: React.FC<BodyModelProps> = ({
@@ -106,7 +116,29 @@ export const BodyModel: React.FC<BodyModelProps> = ({
   selectedPart,
   gender,
   viewMode,
+  marking,
+  clearSignal,
+  onAreaChange,
+  onModelReady,
 }) => {
+  const strokeRegion = useRef<FullBodyRegion | null>(null);
+  const strokeActive = useRef(false);
+  const strokeDragged = useRef(false);
+  const areaReady = useRef(false);
+  const paintedSamples = useRef(0);
+  const strokeStartScreen = useRef<{ x: number; y: number } | null>(null);
+  const previousPoint = useRef<THREE.Vector3 | null>(null);
+
+  useEffect(() => {
+    const endStroke = () => { strokeActive.current = false; };
+    window.addEventListener('pointerup', endStroke);
+    window.addEventListener('pointercancel', endStroke);
+    return () => {
+      window.removeEventListener('pointerup', endStroke);
+      window.removeEventListener('pointercancel', endStroke);
+    };
+  }, []);
+
   const modelPath = useMemo(() => {
     if (viewMode === "head") {
       return gender === "male" ? "/models/male/male-head.glb" : "/models/female/female-head.glb";
@@ -167,11 +199,18 @@ export const BodyModel: React.FC<BodyModelProps> = ({
     });
   }, [scene, actions]);
 
-  const { modelScale, modelPosition } = useMemo(() => {
+  useEffect(() => {
+    onModelReady();
+  }, [onModelReady]);
+
+  const { modelScale, modelPosition, surfaceBounds, paintMin, paintMax } = useMemo(() => {
     if (!scene) {
       return { 
         modelScale: [1, 1, 1] as [number, number, number], 
-        modelPosition: [0, 0, 0] as [number, number, number] 
+        modelPosition: [0, 0, 0] as [number, number, number],
+        surfaceBounds: { bottom: -1.5, height: 3.25, width: 2, centerX: 0 } as BodySurfaceBounds,
+        paintMin: new THREE.Vector3(-1, -1.6, -1),
+        paintMax: new THREE.Vector3(1, 1.7, 1),
       };
     }
 
@@ -204,34 +243,131 @@ export const BodyModel: React.FC<BodyModelProps> = ({
 
     return {
       modelScale: [finalScale, finalScale, finalScale] as [number, number, number],
-      modelPosition: position
+      modelPosition: position,
+      surfaceBounds: {
+        bottom: box.min.y * finalScale + position[1],
+        height: size.y * finalScale,
+        width: size.x * finalScale,
+        centerX: center.x * finalScale + position[0],
+      } as BodySurfaceBounds,
+      paintMin: box.min.clone().multiplyScalar(finalScale).add(new THREE.Vector3(...position)).addScalar(-BRUSH_RADIUS),
+      paintMax: box.max.clone().multiplyScalar(finalScale).add(new THREE.Vector3(...position)).addScalar(BRUSH_RADIUS),
     };
   }, [scene]);
+
+  const paintVolume = useMemo(() => viewMode === 'full' ? new BodyPaintVolume(paintMin, paintMax) : null, [paintMin, paintMax, viewMode]);
+
+  useEffect(() => {
+    if (!paintVolume) return;
+    const changed: { mesh: THREE.Mesh; original: THREE.Material | THREE.Material[]; painted: THREE.Material[] }[] = [];
+    scene.traverse(child => {
+      if (!(child as THREE.Mesh).isMesh) return;
+      const mesh = child as THREE.Mesh;
+      const original = mesh.material;
+      const painted = (Array.isArray(original) ? original : [original]).map(material => createPaintMaterial(material, paintVolume));
+      mesh.material = Array.isArray(original) ? painted : painted[0];
+      changed.push({ mesh, original, painted });
+    });
+    return () => {
+      changed.forEach(({ mesh, original, painted }) => {
+        mesh.material = original;
+        painted.forEach(material => material.dispose());
+      });
+      paintVolume.texture.dispose();
+    };
+  }, [scene, paintVolume]);
+
+  useEffect(() => {
+    strokeRegion.current = null;
+    strokeActive.current = false;
+    areaReady.current = false;
+    paintedSamples.current = 0;
+    previousPoint.current = null;
+    paintVolume?.clear();
+  }, [clearSignal, paintVolume]);
+
+  const paintAt = (point: THREE.Vector3, region: FullBodyRegion) => {
+    if (!paintVolume?.paint(point, region, surfaceBounds, BRUSH_RADIUS)) return;
+    paintedSamples.current++;
+    if (!areaReady.current && paintedSamples.current >= 3) {
+      areaReady.current = true;
+      onAreaChange(region, true);
+    }
+  };
+
+  const startMark = (event: ThreeEvent<PointerEvent>) => {
+    if (viewMode !== 'full' || !marking || (event.nativeEvent.pointerType === 'mouse' && event.nativeEvent.button !== 0)) return;
+    event.stopPropagation();
+    const region = bodyRegionAt(event.point, surfaceBounds);
+    if (strokeRegion.current && strokeRegion.current !== region) return;
+    if (!strokeRegion.current) {
+      strokeRegion.current = region;
+      onAreaChange(region, false);
+    }
+    strokeActive.current = true;
+    strokeDragged.current = false;
+    strokeStartScreen.current = { x: event.nativeEvent.clientX, y: event.nativeEvent.clientY };
+    previousPoint.current = event.point.clone();
+    paintAt(event.point, region);
+  };
+
+  const continueMark = (event: ThreeEvent<PointerEvent>) => {
+    if (!strokeActive.current || !marking || viewMode !== 'full') return;
+    event.stopPropagation();
+    const start = strokeStartScreen.current;
+    if (start && Math.hypot(event.nativeEvent.clientX - start.x, event.nativeEvent.clientY - start.y) >= 7) strokeDragged.current = true;
+    if (!strokeDragged.current) return;
+    const region = strokeRegion.current;
+    if (!region || bodyRegionAt(event.point, surfaceBounds) !== region) {
+      previousPoint.current = null;
+      return;
+    }
+    const last = previousPoint.current;
+    if (!last) {
+      paintAt(event.point, region);
+      previousPoint.current = event.point.clone();
+      return;
+    }
+    const distance = last.distanceTo(event.point);
+    if (distance < BRUSH_STEP) return;
+    if (distance > 0.4) {
+      paintAt(event.point, region);
+      previousPoint.current = event.point.clone();
+      return;
+    }
+    const steps = Math.min(16, Math.ceil(distance / BRUSH_STEP));
+    for (let step = 1; step <= steps; step++) {
+      const point = last.clone().lerp(event.point, step / steps);
+      if (bodyRegionAt(point, surfaceBounds) === region) paintAt(point, region);
+    }
+    previousPoint.current = event.point.clone();
+  };
+
+  const finishMark = () => {
+    if (!strokeActive.current) return;
+    strokeActive.current = false;
+    if (!strokeDragged.current && strokeRegion.current) {
+      onSelectPart(strokeRegion.current);
+    } else if (strokeRegion.current && areaReady.current) {
+      onAreaChange(strokeRegion.current, true);
+    }
+  };
+
+  const selectOnClick = (event: ThreeEvent<MouseEvent>) => {
+    if (viewMode !== 'full' || marking || event.delta >= 7) return;
+    event.stopPropagation();
+    onSelectPart(bodyRegionAt(event.point, surfaceBounds));
+  };
 
   return (
     <group position={[0, 0, 0]}>
       {/* The Real 3D Model */}
-      <group scale={modelScale} position={modelPosition}>
+      <group scale={modelScale} position={modelPosition} onPointerDown={startMark} onPointerMove={continueMark} onPointerUp={finishMark} onClick={selectOnClick}>
         <primitive object={scene} />
       </group>
 
       {/* Annotations Group */}
       <group>
-        {/* 1. Full Body View */}
-        {viewMode === "full" && (gender === "male" ? MALE_BODY_PARTS : FEMALE_BODY_PARTS).map((part) => (
-          <BodyPart
-            key={part.name}
-            position={part.position}
-            args={part.args as [number, number, number] | [number, number, number, number]}
-            name={part.name}
-            type={part.type}
-            rotation={part.rotation}
-            onSelect={onSelectPart}
-            selectedPart={selectedPart}
-            markerRadius={0.04} // Smaller markers for full body view
-          />
-        ))}
-
         {/* 2. Head View */}
         {viewMode === "head" && (gender === "male" ? MALE_HEAD_PARTS : FEMALE_HEAD_PARTS).map((part) => (
           <BodyPart

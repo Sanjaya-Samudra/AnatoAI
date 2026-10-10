@@ -6,6 +6,9 @@ import { readChatStream } from '../src/lib/chat-stream';
 import { consultationSummary, createConsultationPdf } from '../src/lib/consultation-summary';
 import { checkRateLimit, localRateLimit } from '../src/lib/rate-limit';
 import { searchableParts } from '../src/lib/anatomy';
+import { bodyRegionAt } from '../src/lib/body-regions';
+import { BodyPaintVolume } from '../src/lib/body-paint';
+import { Vector3 } from 'three';
 
 const valid = { messages: [], selectedPart: 'Knee (Patellar)', gender: 'male', viewMode: 'left-leg' };
 test('a pin produces an initial request with the correct side before asking questions', () => {
@@ -21,6 +24,32 @@ test('anatomical catalog preserves left and right selections independently', () 
   assert.ok(searchableParts('male', 'left-leg').every(p => p.view === 'left-leg'));
   assert.ok(searchableParts('male', 'right-leg').every(p => p.view === 'right-leg'));
   assert.throws(() => validateChatRequest({ ...valid, viewMode: 'head' }), RequestError);
+});
+test('full-body surface coordinates stay inside their starting anatomy region', () => {
+  const bounds = { bottom: -1.5, height: 3.25, width: 2, centerX: 0 };
+  assert.equal(bodyRegionAt({ x: 0, y: 1.5 }, bounds), 'Head');
+  assert.equal(bodyRegionAt({ x: 0, y: 0.5 }, bounds), 'Torso');
+  assert.equal(bodyRegionAt({ x: 0.7, y: 0.5 }, bounds), 'Left Hand');
+  assert.equal(bodyRegionAt({ x: -0.7, y: 0.5 }, bounds), 'Right Hand');
+  assert.equal(bodyRegionAt({ x: 0.2, y: -0.9 }, bounds), 'Left Leg');
+  assert.equal(bodyRegionAt({ x: -0.2, y: -0.9 }, bounds), 'Right Leg');
+});
+test('surface paint stays inside its first region and persists on the front and back', () => {
+  const bounds = { bottom: -1.5, height: 3.25, width: 2, centerX: 0 };
+  const volume = new BodyPaintVolume(new Vector3(-1, -1.6, -1), new Vector3(1, 1.8, 1));
+  const front = new Vector3(0, 1.5, 0.45);
+  const back = new Vector3(0, 1.5, -0.45);
+  assert.equal(volume.paint(front, 'Head', bounds), true);
+  assert.ok(volume.coverageAt(front) > 0);
+  assert.equal(volume.coverageAt(back), 0);
+  assert.equal(volume.paint(new Vector3(0, 0.5, 0.45), 'Head', bounds), false);
+  assert.equal(volume.paint(back, 'Head', bounds), true);
+  assert.ok(volume.coverageAt(front) > 0);
+  assert.ok(volume.coverageAt(back) > 0);
+  volume.clear();
+  assert.equal(volume.coverageAt(front), 0);
+  assert.equal(volume.coverageAt(back), 0);
+  volume.texture.dispose();
 });
 test('reject untrusted roles, invented points, oversized history and messages', () => {
   for (const change of [

@@ -6,11 +6,12 @@ import BodyPartSearch from "@/components/BodyPartSearch";
 import SceneBoundary from "@/components/SceneBoundary";
 const Scene = dynamic(() => import("@/components/Scene"), { ssr: false, loading: () => <div role="status" className="flex h-full items-center justify-center text-sm text-blue-600">Preparing the 3D viewer…</div> });
 import Overlay from "@/components/Overlay";
-import { Activity, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { NavigationRail } from "@/components/NavigationRail";
 import Link from "next/link";
 import Image from "next/image";
+import type { FullBodyRegion } from "@/lib/body-regions";
 
 export default function AppPage() {
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
@@ -112,20 +113,8 @@ export default function AppPage() {
 
       {/* 3D Scene */}
       <div className={`absolute z-0 ${selectedPart ? "bottom-[62dvh] left-0 right-0 top-28 md:inset-0" : "inset-0"}`}>
-        <SceneBoundary><Scene onSelectPart={handlePartSelect} selectedPart={selectedPart} gender={gender} viewMode={viewMode} /></SceneBoundary>
+        <SceneBoundary><Scene key={`${gender}-${viewMode}`} onSelectPart={handlePartSelect} onAnalyzeArea={(region: FullBodyRegion) => setSelectedPart(region)} selectedPart={selectedPart} gender={gender} viewMode={viewMode} /></SceneBoundary>
       </div>
-
-      {/* Fixed Notification Button */}
-      {!selectedPart && viewMode === "full" && (
-        <div className="fixed bottom-36 md:bottom-6 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
-          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl px-4 py-3 rounded-full shadow-2xl border border-blue-200/50 dark:border-blue-900/50 text-blue-700 dark:text-blue-300 text-xs md:text-sm font-semibold animate-pulse font-sans">
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              <span>Click on a body part to analyze</span>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Overlay */}
       <Overlay selectedPart={selectedPart} onClose={() => setSelectedPart(null)} gender={gender} viewMode={viewMode} />
